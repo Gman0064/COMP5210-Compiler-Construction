@@ -32,7 +32,7 @@ def main():
         file = open(args.filename, 'r')
         script = file.read()
         lexer = Lexer(args.l)
-        lexer.process_script(script)
+        lexer.tokenize_script(script)
     else:
         print('[Error] Given filename "{0}" does not exist!'.format(args.filename))
         exit(-1)
