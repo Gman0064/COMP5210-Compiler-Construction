@@ -68,13 +68,16 @@ class Lexer:
 
         # Matches any character between quotations, including
         # newlines and whitespace
-        # Note: Does not recognize escaped characters
+        # Note: Includes double quotation in the token
         self.string_re = r"\"[\S\s]*?\""
 
         # Matches any number literal with digits between
         # single decimal point
         # Won't match anything if there's a second decimal    
         self.num_re = r"([0-9]+\.?[0-9]+)\w"
+
+        # Matches identifiers
+        self.id_re = r"[A-Za-z]+\w"
 
         self.newline_re = r"\n"
 
@@ -96,6 +99,7 @@ class Lexer:
             # ('UNARY_OP', self.unary_operands_re),  # Unary operators
             ('BINARY_OP', self.binary_operands_re),  # Binary statement operators
             ('NEWLINE', self.newline_re),  # Newline operator
+            ('IDENTIFIER', self.id_re),  # Identifier
             ('UNKNOWN', self.binary_operands_re),  # Any other character
         ]
 
@@ -144,11 +148,9 @@ class Lexer:
     def write_token_file(self, tokens: list):
         pass
 
-
-statements = "if quantity do\n total := total + price * quantity;\n tax := price * 0.05;\n ENDIF;\n This is a String ++ ||"
-
-statement = "this is a statement"
+with open("CheckForPrime.c", "rt") as TestFile:
+    TestFileData = TestFile.read()
 
 lexer = Lexer(False)
 
-lexer.tokenize_script(statements)
+lexer.tokenize_script(TestFileData)
