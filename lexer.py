@@ -69,12 +69,12 @@ class Lexer:
         # Matches any character between quotations, including
         # newlines and whitespace
         # Note: Does not recognize escaped characters
-        self.string_re = r"[\S\s]*?(?=\")"
+        self.string_re = r"\"[\S\s]*?\""
 
         # Matches any number literal with digits between
         # single decimal point
         # Won't match anything if there's a second decimal    
-        self.num_re = r"([0-9]*\.[0-9]*)\w"
+        self.num_re = r"([0-9]+\.?[0-9]+)\w"
 
         self.newline_re = r"\n"
 
