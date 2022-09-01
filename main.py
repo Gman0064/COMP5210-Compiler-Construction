@@ -1,16 +1,48 @@
-# This is a sample Python script.
+### Project Imports
+from lexer import Lexer
+from error import Error
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+### Python Imports
+import argparse
+import os
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def main():
+    """
+    Main Method
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    Parse the incoming flags provided, and if all arguments are valid
+    pass over to the lexer
+    """
+
+    # Define our program arguments and parse them
+    arg_parser = argparse.ArgumentParser(
+        description='COMP5210 Compiler Construction project.\
+                     Produces tokens for a subset of the C language \
+                     using a lexer and parser.'
+    )
+
+    arg_parser.add_argument('filename', metavar="filename", help="input script filename", type=str)
+    arg_parser.add_argument("-l", help="increase output verbosity", action="store_true")
+    args = arg_parser.parse_args()
+
+
+    # Check to see if the incoming file exists, otherwise exit
+    if os.path.exists(args.filename):
+        file = open(args.filename, 'r')
+        script = file.read()
+        lexer = Lexer(args.l)
+        lexer.tokenize_file(script)
+    else:
+        print('[Error] Given filename "{0}" does not exist!'.format(args.filename))
+        exit(-1)
+
+
+if __name__ == "__main__":
+    """
+    Main Method
+
+    Parse the incoming flags provided, and if all arguments are valid
+    pass over to the lexer
+    """
+    main()

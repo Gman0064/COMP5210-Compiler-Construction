@@ -13,31 +13,46 @@
         "do",
         "while",
         "return",
-        "break"
+        "break",
+        "using",
+        "namespace",
+        "class"
+    ],
+    "access_specifiers":[
+        "public",
+        "private",
+        "protected"
+    ],
+    "scope":[
+        "{",
+        "}"
+    ],
+    "function":[
+        "\\(",
+        "\\)"
     ],
     "single_operands":[
-        "+",
+        "\\+",
         "\\-",
         "*",
-        "/",
+        "\/",
         "<",
         ">",
         "%"
     ],
     "double_operands":[
-        "\\+=",
-        "\\-=",
-        "\\*=",
-        "/=",
-        "<=",
-        ">=",
-        "\\+\\+"
+        "\\+\\=",
+        "\\-\\=",
+        "\\*\\=",
+        "\\=\\=",
+        "<\\=",
+        ">\\="
     ],
     "unary_operands":[
         "-",
-        "+",
-        "!",
-        "&"
+        "\\+",
+        "\\!",
+        "\\&"
     ],
     "binary_operands":[
         "&&",
