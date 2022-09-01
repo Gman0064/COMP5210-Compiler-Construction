@@ -36,14 +36,14 @@ class Lexer:
 
 
     """
-    __op_set_regex
+    __set_regex
 
     Private method that generates a regular expression from
-    a set of operators
+    a set of values
 
     Ex. [\+\-*/<>]
     """
-    def __op_set_regex(self, lexeme_set: set) -> str:
+    def __set_regex(self, lexeme_set: set) -> str:
         lexeme_re: set = "["
 
         for lexeme in lexeme_set:
@@ -96,7 +96,7 @@ class Lexer:
         self.scope_re = self.__keyword_regex(config["scope"])
         self.function_re = self.__keyword_regex(config["function"])
         self.access_spec_re = self.__keyword_regex(config["access_specifiers"])
-        self.single_operands_re = self.__op_set_regex(config["single_operands"])
+        self.single_operands_re = self.__set_regex(config["single_operands"])
         self.double_operands_re = self.__keyword_regex(config["double_operands"])
         self.unary_operands_re = self.__keyword_regex(config["unary_operands"])
         self.binary_operands_re = self.__keyword_regex(config["binary_operands"])
@@ -126,23 +126,18 @@ class Lexer:
         # https://docs.python.org/3/library/re.html#writing-a-tokenizer
 
         self.grammar_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specifications)
-        
-        #print(self.grammar_regex)
 
+        # TODO: Line counting isn't working right, related to NEWLINE regex
         line_num = 1
         line_start = 0
         for match in re.finditer(self.grammar_regex, input_str):
             kind = match.lastgroup
             value = match.group()
             column = match.start() - line_start
-            if kind == 'NUMBER':
-                value = float(value) if '.' in value else int(value)
-            elif kind == 'NEWLINE':
-                line_start = match.end()
-                line_num += 1
-                continue
-            elif kind == 'UNKNOWN':
-                Error.throw_error("Unidentified token", ErrorTypes.TOKEN, line_num, column)
+            # if kind == 'NEWLINE':
+            #     line_start = match.end()
+            #     line_num += 1
+            #     continue
             yield TokenType(kind, value, line_num, column)
 
 
@@ -155,7 +150,10 @@ class Lexer:
     def tokenize_file(self, input_str: str) -> list:
         tokens = self.tokenize(input_str)
         for token in tokens:
-            print("{0},   '{1}'".format(token.tokenType, token.tokenValue))
+            print("{0},   '{1}'".format(
+                token.tokenType,
+                token.tokenValue
+            ))
 
         if (self.gen_token_outfile):
             self.write_token_file(tokens)
@@ -166,8 +164,16 @@ class Lexer:
     """
     write_token_file
 
-    Tokenize the incoming script using all of the preset flags
-    from the class instantiation
+    Write a text file of all the tokens found previously
+    in the lexer
     """
     def write_token_file(self, tokens: list):
-        pass
+        token_file_out = open("tokens.txt", "w")
+
+        # Somehow tokens is empty here?
+        for token in tokens:
+            token_file_out.write("{0},   '{1}'".format(
+                token.tokenType,
+                token.tokenValue
+            ))
+        token_file_out.close()
