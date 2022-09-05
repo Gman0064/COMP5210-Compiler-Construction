@@ -79,23 +79,10 @@ class Lexer:
 
         # Matches any character between quotations, including
         # newlines and whitespace
-<<<<<<< HEAD
-        # Note: Includes double quotation in the token
-        self.string_re = r"\"[\S\s]*?\""
-
-        # Matches any number literal with digits between
-        # single decimal point
-        # Won't match anything if there's a second decimal    
-        self.num_re = r"([0-9]+\.?[0-9]+)\w"
-
-        # Matches identifiers
-        self.id_re = r"[A-Za-z]+\w"
-=======
         # Note: Does not recognize escaped characters
         self.string_re = r"(\"{1}[\S\s]*?\")"
 
         self.identifier_re = r"[_a-zA-Z][_a-zA-Z0-9]*"
->>>>>>> origin/master
 
         self.preprocessor_re = r"(^#.*)"
 
@@ -103,7 +90,6 @@ class Lexer:
 
         # https://stackoverflow.com/a/49187259
         self.comment_re = r"(\/\/)(.+?)(?=[\n\r]|\*\))"
-
         self.type_re = self.__keyword_regex(config["types"])
         self.keyword_re = self.__keyword_regex(config["keywords"])
         self.scope_re = self.__keyword_regex(config["scope"])
@@ -114,22 +100,8 @@ class Lexer:
         self.unary_operands_re = self.__keyword_regex(config["unary_operands"])
         self.binary_operands_re = self.__keyword_regex(config["binary_operands"])
 
-
     def tokenize(self, input_str: str) -> list:
         token_specifications = [
-<<<<<<< HEAD
-            ('NUMBER', self.num_re),  # Integer or decimal number
-            ('STRING', self.string_re),  # String literal Debug: The detection of String is not working properly
-            ('TYPES', self.type_re),  # Variable Type declaration
-            ('KEYWORDS', self.keyword_re),  # Generic keywords
-            ('SINGLE_OP', self.single_operands_re),  # Single char operators Debug: There's some problem with this one
-            ('DOUBLE_OP', self.double_operands_re),  # Double char operators
-            # ('UNARY_OP', self.unary_operands_re),  # Unary operators
-            ('BINARY_OP', self.binary_operands_re),  # Binary statement operators
-            ('NEWLINE', self.newline_re),  # Newline operator
-            ('IDENTIFIER', self.id_re),  # Identifier
-            ('UNKNOWN', self.binary_operands_re),  # Any other character
-=======
             ('PREPROCESSOR', self.preprocessor_re),  # String literal Debug: The detection of String is not working properly
             ('COMMENT', self.comment_re),               # C style comment strings
             ('NUMBER', self.num_re),                    # Integer or decimal number
@@ -141,11 +113,10 @@ class Lexer:
             ('ACCESS_SPEC', self.access_spec_re),       # Access specifiers
             ('TERMINATOR', self.terminator_re),         # Statement terminator ;
             ('FUNCTION_OP', self.function_re),          # Function tokens
-            ('SINGLE_OP', self.single_operands_re),     # Single char operators
             ('DOUBLE_OP', self.double_operands_re),     # Double char operators
+            ('SINGLE_OP', self.single_operands_re),     # Single char operators
             ('UNARY_OP', self.unary_operands_re),       # Unary operators
             ('BINARY_OP', self.binary_operands_re),     # Binary statement operators
->>>>>>> origin/master
         ]
 
         # Based on following resources below
@@ -197,14 +168,6 @@ class Lexer:
     def write_token_file(self, tokens: list):
         token_file_out = open("tokens.txt", "w")
 
-<<<<<<< HEAD
-with open("CheckForPrime.c", "rt") as TestFile:
-    TestFileData = TestFile.read()
-
-lexer = Lexer(False)
-
-lexer.tokenize_script(TestFileData)
-=======
         # Somehow tokens is empty here?
         for token in tokens:
             token_file_out.write("{0},   '{1}'".format(
@@ -212,4 +175,3 @@ lexer.tokenize_script(TestFileData)
                 token.tokenValue
             ))
         token_file_out.close()
->>>>>>> origin/master
