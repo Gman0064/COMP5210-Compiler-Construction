@@ -69,6 +69,7 @@ class Lexer:
         f.close()
 
         config = json.loads(f_data)
+        self.config2 = json.loads(f_data)
 
         self.gen_token_outfile = token_outfile_flag
 
@@ -121,11 +122,22 @@ class Lexer:
             ('BINARY_OP', self.binary_operands_re),     # Binary statement operators
         ]
 
+        token_specifications_new = [
+            ('PREPROCESSOR', self.preprocessor_re),
+            ('COMMENT', self.comment_re),
+            ('NUMBER', self.num_re),
+            ('STRING', self.string_re),
+        ]
+        for key in self.config2.keys():
+            token_specifications_new.append((key, self.__keyword_regex(self.config2[key])))
+        token_specifications_new.append(('IDENTIFIER', self.identifier_re))
+        token_specifications_new.append(('TERMINATOR', self.terminator_re))
+
         # Based on following resources below
         # https://stackoverflow.com/questions/70680363/structural-pattern-matching-using-regex
         # https://docs.python.org/3/library/re.html#writing-a-tokenizer
 
-        self.grammar_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specifications)
+        self.grammar_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specifications_new)
 
         # TODO: Line counting isn't working right, related to NEWLINE regex
         line_num = 1
