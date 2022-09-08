@@ -1,6 +1,4 @@
 ### Project Imports
-from lib2to3.pgen2 import grammar
-from lib2to3.pgen2.tokenize import tokenize
 from tokentype import TokenType
 from error import Error, ErrorTypes
 
