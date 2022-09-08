@@ -2,10 +2,12 @@
     "TYPE":[
         "int",
         "float",
+        "short",
         "long",
         "double",
         "char",
-        "bool"
+        "bool",
+        "enum"
     ],
     "KEYWORD":[
         "if",
@@ -13,9 +15,13 @@
         "do",
         "while",
         "return",
+        "switch",
         "break",
-        "using",
-        "namespace"
+        "default",
+        "continue",
+        "unsigned",
+        "signed",
+        "void"
     ],
     "SCOPE":[
         "{",
