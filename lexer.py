@@ -68,7 +68,8 @@ class Lexer:
         f_data = f.read()
         f.close()
 
-        config = json.loads(f_data)
+        # config = json.loads(f_data)
+        self.config2 = json.loads(f_data)
 
         self.gen_token_outfile = token_outfile_flag
 
@@ -90,40 +91,56 @@ class Lexer:
 
         # https://stackoverflow.com/a/49187259
         self.comment_re = r"(\/\/)(.+?)(?=[\n\r]|\*\))"
-        self.type_re = self.__keyword_regex(config["types"])
-        self.keyword_re = self.__keyword_regex(config["keywords"])
-        self.scope_re = self.__keyword_regex(config["scope"])
-        self.function_re = self.__keyword_regex(config["function"])
-        self.access_spec_re = self.__keyword_regex(config["access_specifiers"])
-        self.single_operands_re = self.__set_regex(config["single_operands"])
-        self.double_operands_re = self.__keyword_regex(config["double_operands"])
-        self.unary_operands_re = self.__keyword_regex(config["unary_operands"])
-        self.binary_operands_re = self.__keyword_regex(config["binary_operands"])
+
+        # self.type_re = self.__keyword_regex(config["types"])
+        # self.keyword_re = self.__keyword_regex(config["keywords"])
+        # self.scope_re = self.__keyword_regex(config["scope"])
+        # self.function_re = self.__keyword_regex(config["function"])
+        # self.access_spec_re = self.__keyword_regex(config["access_specifiers"])
+        # self.single_operands_re = self.__set_regex(config["single_operands"])
+        # self.double_operands_re = self.__keyword_regex(config["double_operands"])
+        # self.unary_operands_re = self.__keyword_regex(config["unary_operands"])
+        # self.binary_operands_re = self.__keyword_regex(config["binary_operands"])
+
 
     def tokenize(self, input_str: str) -> list:
-        token_specifications = [
-            ('PREPROCESSOR', self.preprocessor_re),  # String literal Debug: The detection of String is not working properly
-            ('COMMENT', self.comment_re),               # C style comment strings
-            ('NUMBER', self.num_re),                    # Integer or decimal number
-            ('STRING', self.string_re),                 # String literal
-            ('TYPE', self.type_re),                     # Variable type declaration
-            ('KEYWORD', self.keyword_re),               # Generic keywords
-            ('IDENTIFIER', self.identifier_re),         # Match identifier for variables and other keywords not match
-            ('SCOPE', self.scope_re),                   # Scope tokens like { and }
-            ('ACCESS_SPEC', self.access_spec_re),       # Access specifiers
-            ('TERMINATOR', self.terminator_re),         # Statement terminator ;
-            ('FUNCTION_OP', self.function_re),          # Function tokens
-            ('DOUBLE_OP', self.double_operands_re),     # Double char operators
-            ('SINGLE_OP', self.single_operands_re),     # Single char operators
-            ('UNARY_OP', self.unary_operands_re),       # Unary operators
-            ('BINARY_OP', self.binary_operands_re),     # Binary statement operators
+        # token_specifications = [
+        #    ('PREPROCESSOR', self.preprocessor_re),  # String literal Debug: The detection of String is not working properly
+        #    ('COMMENT', self.comment_re),               # C style comment strings
+        #    ('NUMBER', self.num_re),                    # Integer or decimal number
+        #    ('STRING', self.string_re),                 # String literal
+        #    ('TYPE', self.type_re),                     # Variable type declaration
+        #    ('KEYWORD', self.keyword_re),               # Generic keywords
+        #    ('IDENTIFIER', self.identifier_re),         # Match identifier for variables and other keywords not match
+        #    ('SCOPE', self.scope_re),                   # Scope tokens like { and }
+        #    ('ACCESS_SPEC', self.access_spec_re),       # Access specifiers
+        #    ('TERMINATOR', self.terminator_re),         # Statement terminator ;
+        #    ('FUNCTION_OP', self.function_re),          # Function tokens
+        #    ('SINGLE_OP', self.single_operands_re),     # Single char operators
+        #    ('DOUBLE_OP', self.double_operands_re),     # Double char operators
+        #    ('UNARY_OP', self.unary_operands_re),       # Unary operators
+        #    ('BINARY_OP', self.binary_operands_re),     # Binary statement operators
+        # ]
+
+
+        # This is the new attempt of making the token specification list
+        # Needs more testing with this, it currently works the same way as the old one
+        token_specifications_new = [
+            ('PREPROCESSOR', self.preprocessor_re),
+            ('COMMENT', self.comment_re),
+            ('NUMBER', self.num_re),
+            ('STRING', self.string_re),
         ]
+        for key in self.config2.keys():
+            token_specifications_new.append((key, self.__keyword_regex(self.config2[key])))
+        token_specifications_new.append(('IDENTIFIER', self.identifier_re))
+        token_specifications_new.append(('TERMINATOR', self.terminator_re))
 
         # Based on following resources below
         # https://stackoverflow.com/questions/70680363/structural-pattern-matching-using-regex
         # https://docs.python.org/3/library/re.html#writing-a-tokenizer
 
-        self.grammar_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specifications)
+        self.grammar_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specifications_new)
 
         # TODO: Line counting isn't working right, related to NEWLINE regex
         line_num = 1
@@ -137,7 +154,6 @@ class Lexer:
             #     line_num += 1
             #     continue
             yield TokenType(kind, value, line_num, column)
-
 
     """
     tokenize_file
