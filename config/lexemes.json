@@ -1,5 +1,5 @@
 {
-    "types":[
+    "TYPE":[
         "int",
         "float",
         "long",
@@ -7,7 +7,7 @@
         "char",
         "bool"
     ],
-    "keywords":[
+    "KEYWORD":[
         "if",
         "else",
         "do",
@@ -15,23 +15,17 @@
         "return",
         "break",
         "using",
-        "namespace",
-        "class"
+        "namespace"
     ],
-    "access_specifiers":[
-        "public",
-        "private",
-        "protected"
-    ],
-    "scope":[
+    "SCOPE":[
         "{",
         "}"
     ],
-    "function":[
+    "PARANTHESES":[
         "\\(",
         "\\)"
     ],
-    "single_operands":[
+    "SINGLE_OP":[
         "\\+",
         "\\-",
         "\\*",
@@ -41,26 +35,32 @@
         "%",
         "\\="
     ],
-    "double_operands":[
+    "DOUBLE_OP":[
         "\\+\\+",
         "\\+\\=",
         "\\-\\=",
         "\\*\\=",
         "\\=\\=",
         "<\\=",
-        ">\\="
+        ">\\=",
     ],
-    "unary_operands":[
+    "UNARY_OP":[
         "\\-",
         "\\+",
         "\\!",
-        "\\&"
+        "\\&",
+        "\\|",
+        "\\^",
+        "\\~"
     ],
-    "binary_operands":[
+    "BINARY_OP":[
         "&&",
-        "\\|\\|"
+        "\\|\\|",
+        "<<",
+        ">>"
     ],
-    "new_line": [
-        "r'\n'"
+    "ESCAPE_SEQ": [
+        "r'\n'",
+        "r'\t'"
     ]
 }
