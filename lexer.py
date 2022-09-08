@@ -69,7 +69,7 @@ class Lexer:
         f.close()
 
         # config = json.loads(f_data)
-        self.config2 = json.loads(f_data)
+        self.config = json.loads(f_data)
 
         self.gen_token_outfile = token_outfile_flag
 
@@ -91,16 +91,6 @@ class Lexer:
 
         # https://stackoverflow.com/a/49187259
         self.comment_re = r"(\/\/)(.+?)(?=[\n\r]|\*\))"
-
-        # self.type_re = self.__keyword_regex(config["types"])
-        # self.keyword_re = self.__keyword_regex(config["keywords"])
-        # self.scope_re = self.__keyword_regex(config["scope"])
-        # self.function_re = self.__keyword_regex(config["function"])
-        # self.access_spec_re = self.__keyword_regex(config["access_specifiers"])
-        # self.single_operands_re = self.__set_regex(config["single_operands"])
-        # self.double_operands_re = self.__keyword_regex(config["double_operands"])
-        # self.unary_operands_re = self.__keyword_regex(config["unary_operands"])
-        # self.binary_operands_re = self.__keyword_regex(config["binary_operands"])
 
 
     def tokenize(self, input_str: str) -> list:
@@ -130,7 +120,10 @@ class Lexer:
             ('COMMENT', self.comment_re),
             ('NUMBER', self.num_re),
             ('STRING', self.string_re),
+            ('IDENTIFIER', self.identifier_re),
+            ('TERMINATOR', self.terminator_re)
         ]
+
         for key in self.config2.keys():
             token_specifications_new.append((key, self.__keyword_regex(self.config2[key])))
         token_specifications_new.append(('IDENTIFIER', self.identifier_re))
