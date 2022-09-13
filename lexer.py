@@ -90,13 +90,18 @@ class Lexer:
         # https://stackoverflow.com/a/49187259
         self.comment_re = r"(\/\/)(.+?)(?=[\n\r]|\*\))"
 
+        self.newline_re = "\\n"
+
 
     def tokenize(self, input_str: str) -> list:
-        # This is the new attempt of making the token specification list
-        # Needs more testing with this, it currently works the same way as the old one
-        token_specifications = [
+        # Mukarram: We need to double check which lexemes should be checked for first
+        # This might require abandoning appending lexemes.json to token_specs
+        # and instead just add lexemes from lexemes.json to token_specs one based on priority
+        token_specs = [
+            ('NEWLINE', self.newline_re),
             ('PREPROCESSOR', self.preprocessor_re),
             ('COMMENT', self.comment_re),
+            # The list from lexemes.json is inserted from this position
             ('NUMBER', self.num_re),
             ('STRING', self.string_re),
             ('IDENTIFIER', self.identifier_re),
@@ -104,25 +109,27 @@ class Lexer:
         ]
 
         for key in self.config.keys():
-            token_specifications.append((key, self.__keyword_regex(self.config2[key])))
+            # token_specs.append((key, self.__keyword_regex(self.config[key])))
+            # Mukarram: I changed it because keywords were incorrectly being identified as identifiers
+            token_specs.insert(3, (key, self.__keyword_regex(self.config[key])))
 
         # Based on following resources below
         # https://stackoverflow.com/questions/70680363/structural-pattern-matching-using-regex
         # https://docs.python.org/3/library/re.html#writing-a-tokenizer
 
-        self.grammar_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specifications)
+        self.grammar_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specs)
 
-        # TODO: Line counting isn't working right, related to NEWLINE regex
+        # Mukarram: Line counting isn't working right, regex expression for NEWLINE does not work
         line_num = 1
         line_start = 0
         for match in re.finditer(self.grammar_regex, input_str):
             kind = match.lastgroup
             value = match.group()
             column = match.start() - line_start
-            # if kind == 'NEWLINE':
-            #     line_start = match.end()
-            #     line_num += 1
-            #     continue
+            if kind == 'NEWLINE':
+                 line_start = match.end()
+                 line_num += 1
+                 continue
             yield TokenType(kind, value, line_num, column)
 
     """

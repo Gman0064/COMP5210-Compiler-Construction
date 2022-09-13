@@ -6,22 +6,33 @@
         "long",
         "double",
         "char",
-        "bool",
         "enum"
     ],
     "KEYWORD":[
-        "if",
-        "else",
-        "do",
-        "while",
-        "return",
-        "switch",
-        "break",
-        "default",
-        "continue",
+        "struct",
+        "const",
         "unsigned",
         "signed",
-        "void"
+        "break",
+        "continue",
+        "goto",
+        "if",
+        "else",
+        "switch",
+        "case",
+        "for",
+        "do",
+        "while",
+        "default",
+        "enum",
+        "register",
+        "sizeof",
+        "typedef",
+        "volatile",
+        "extern",
+        "return",
+        "static",
+        "union"
     ],
     "SCOPE":[
         "{",
@@ -31,15 +42,6 @@
         "\\(",
         "\\)"
     ],
-    "DOUBLE_OP":[
-        "\\+\\+",
-        "\\+\\=",
-        "\\-\\=",
-        "\\*\\=",
-        "\\=\\=",
-        "<\\=",
-        ">\\="
-    ],
     "SINGLE_OP":[
         "\\+",
         "\\-",
@@ -48,9 +50,7 @@
         "<",
         ">",
         "%",
-        "\\="
-    ],
-    "UNARY_OP":[
+        "\\=",
         "\\-",
         "\\+",
         "\\!",
@@ -59,14 +59,17 @@
         "\\^",
         "\\~"
     ],
-    "BINARY_OP":[
+    "DOUBLE_OP":[
+        "\\+\\+",
+        "\\+\\=",
+        "\\-\\=",
+        "\\*\\=",
+        "\\=\\=",
+        "<\\=",
+        ">\\=",
         "&&",
         "\\|\\|",
         "<<",
         ">>"
-    ],
-    "ESCAPE_SEQ": [
-        "r'\n'",
-        "r'\t'"
     ]
 }
