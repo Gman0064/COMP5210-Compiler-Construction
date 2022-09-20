@@ -4,3 +4,9 @@ __pycache__
 .idea/
 .vscode/
 *.txt
+docs/*.lol
+docs/*.out
+docs/*.log
+docs/*.aux
+docs/_minted*
+docs/*.toc
