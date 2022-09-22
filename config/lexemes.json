@@ -1,37 +1,46 @@
 {
-    "types":[
+    "TYPE":[
         "int",
         "float",
+        "short",
         "long",
         "double",
         "char",
-        "bool"
+        "bool",
+        "enum"
     ],
-    "keywords":[
+    "KEYWORD":[
         "if",
         "else",
         "do",
         "while",
         "return",
+        "switch",
         "break",
-        "using",
-        "namespace",
-        "class"
+        "default",
+        "continue",
+        "unsigned",
+        "signed",
+        "void"
     ],
-    "access_specifiers":[
-        "public",
-        "private",
-        "protected"
-    ],
-    "scope":[
+    "SCOPE":[
         "{",
         "}"
     ],
-    "function":[
+    "PARANTHESES":[
         "\\(",
         "\\)"
     ],
-    "single_operands":[
+    "DOUBLE_OP":[
+        "\\+\\+",
+        "\\+\\=",
+        "\\-\\=",
+        "\\*\\=",
+        "\\=\\=",
+        "<\\=",
+        ">\\="
+    ],
+    "SINGLE_OP":[
         "\\+",
         "\\-",
         "\\*",
@@ -41,26 +50,23 @@
         "%",
         "\\="
     ],
-    "double_operands":[
-        "\\+\\+",
-        "\\+\\=",
-        "\\-\\=",
-        "\\*\\=",
-        "\\=\\=",
-        "<\\=",
-        ">\\="
-    ],
-    "unary_operands":[
+    "UNARY_OP":[
         "\\-",
         "\\+",
         "\\!",
-        "\\&"
+        "\\&",
+        "\\|",
+        "\\^",
+        "\\~"
     ],
-    "binary_operands":[
+    "BINARY_OP":[
         "&&",
-        "\\|\\|"
+        "\\|\\|",
+        "<<",
+        ">>"
     ],
-    "new_line": [
-        "r'\n'"
+    "ESCAPE_SEQ": [
+        "r'\n'",
+        "r'\t'"
     ]
 }
