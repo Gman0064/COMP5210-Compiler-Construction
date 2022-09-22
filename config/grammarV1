@@ -1,0 +1,12 @@
+{
+  "1": ["Goal","Expr"],
+  "2": ["Expr","Expr","+","Term"],
+  "3": ["Expr","Expr","-","Term"],
+  "4": ["Expr","Term"],
+  "5": ["Term","Term","*","Factor"],
+  "6": ["Term","Term","/","Factor"],
+  "7": ["Term","Factor"],
+  "8": ["Factor","(","Expr",")"],
+  "9": ["Factor","num"],
+  "10": ["Factor","ident"]
+}
