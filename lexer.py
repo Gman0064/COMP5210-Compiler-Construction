@@ -104,11 +104,19 @@ class Lexer:
             ('TERMINATOR', self.terminator_re)
         ]
 
+        # Mukarram: I changed how the list in lexemes.json is inserted because of some incorrect matches
+        # For example, keywords were incorrectly being identified as identifiers
+        index = 0
+        offset = 3
         for key in self.config.keys():
             # token_specs.append((key, self.__keyword_regex(self.config[key])))
-            # Mukarram: I changed how the list in lexemes.json is inserted because of some incorrect matches
-            # For example, keywords were incorrectly being identified as identifiers
-            token_specs.insert(3, (key, self.__keyword_regex(self.config[key])))
+            # Mukarram: Working on adding escape seq implementation, doesn't work just yet
+            # That is why I skip adding it in token_spec for now
+            if(key == "ESCAPE_SEQ"):
+                index += 1
+                continue
+            token_specs.insert(index + offset, (key, self.__keyword_regex(self.config[key])))
+            index += 1
 
         # Used regex documentation by Python as reference for the code below
         # https://docs.python.org/3/library/re.html#writing-a-tokenizer
