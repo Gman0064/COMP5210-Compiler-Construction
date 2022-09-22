@@ -1,6 +1,7 @@
 # Python Imports
 from typing import Any
 import json
+from collections import deque
 
 
 class Parser:
@@ -20,24 +21,36 @@ class Parser:
         self.grammar = json.loads(f2_data)
 
     def parse(self, token_list: list):
-        output = []
-        output.push("invalid")
-        output.push("0")
-        token = token_list.popleft()
+        output = ["invalid", "0"]
+        token = token_list.pop(0)
         while True:
-            state = output.top()
+            state = str(output[-1])
             if self.config["Action"][state][token]["action"] == "shift":
-                output.push(token)
-                output.push(self.config["Action"][state][token]["num"])
-                token = token_list.popleft()
+                output.append(token)
+                output.append(self.config["Action"][state][token]["num"])
+                if len(token_list) != 0:
+                    token = token_list.pop(0)
+                else:
+                    token = "eof"
             elif self.config["Action"][state][token]["action"] == "reduce":
-                for _ in num((self.grammar[self.config["Action"][state][token][num]].size() - 1) * 2):
-                    output.pop()
-                state = output.top()
-                reduction = self.grammar[self.config["Action"][state][token][num]][0]
-                output.push(reduction)
-                output.push(self.config[state][reduction])
-            elif self.config["Action"][stete][token]["action"] == "acc":
+                reduction = self.grammar[str(self.config["Action"][state][token]["num"])][0]
+                size = len(self.grammar[str(self.config["Action"][state][token]["num"])])
+                for _ in range((size - 1) * 2):
+                    output.remove(output[-1])
+                state = str(output[-1])
+                output.append(reduction)
+                output.append(self.config["Goto"][state][reduction])
+            elif self.config["Action"][state][token]["action"] == "acc":
                 return output
             else:
-                return 0
+                return 1
+
+
+def main():
+    token_list = ["ident", "-", "num", "*", "ident"]
+    parser = Parser()
+    print(parser.parse(token_list))
+
+
+if __name__ == "__main__":
+    main()

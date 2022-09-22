@@ -104,7 +104,7 @@ class Lexer:
         ]
 
         for key in self.config.keys():
-            token_specifications.append((key, self.__keyword_regex(self.config2[key])))
+            token_specifications.append((key, self.__keyword_regex(self.config[key])))
 
         # Based on following resources below
         # https://stackoverflow.com/questions/70680363/structural-pattern-matching-using-regex
