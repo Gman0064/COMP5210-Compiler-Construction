@@ -31,7 +31,7 @@ def main():
     if os.path.exists(args.filename):
         file = open(args.filename, 'r')
         script = file.read()
-        lexer = Lexer(args.l)
+        lexer = Lexer(True)
         lexer.tokenize_file(script)
     else:
         print('[Error] Given filename "{0}" does not exist!'.format(args.filename))

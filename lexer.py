@@ -78,7 +78,7 @@ class Lexer:
 
         # Matches any character between quotations, including
         # newlines and whitespace
-        # Note: Does not recognize escaped characters
+        # Note: Does not recognize escaped characters yet
         self.string_re = r"(\"{1}[\S\s]*?\")"
 
         self.identifier_re = r"[_a-zA-Z][_a-zA-Z0-9]*"
@@ -90,13 +90,9 @@ class Lexer:
         # https://stackoverflow.com/a/49187259
         self.comment_re = r"(\/\/)(.+?)(?=[\n\r]|\*\))"
 
-        self.newline_re = "\\n"
-
+        self.newline_re = r"\n|\r"
 
     def tokenize(self, input_str: str) -> list:
-        # Mukarram: We need to double check which lexemes should be checked for first
-        # This might require abandoning appending lexemes.json to token_specs
-        # and instead just add lexemes from lexemes.json to token_specs one based on priority
         token_specs = [
             ('NEWLINE', self.newline_re),
             ('PREPROCESSOR', self.preprocessor_re),
@@ -110,16 +106,16 @@ class Lexer:
 
         for key in self.config.keys():
             # token_specs.append((key, self.__keyword_regex(self.config[key])))
-            # Mukarram: I changed it because keywords were incorrectly being identified as identifiers
+            # Mukarram: I changed how the list in lexemes.json is inserted because of some incorrect matches
+            # For example, keywords were incorrectly being identified as identifiers
             token_specs.insert(3, (key, self.__keyword_regex(self.config[key])))
 
-        # Based on following resources below
-        # https://stackoverflow.com/questions/70680363/structural-pattern-matching-using-regex
+        # Used regex documentation by Python as reference for the code below
         # https://docs.python.org/3/library/re.html#writing-a-tokenizer
 
         self.grammar_regex = '|'.join('(?P<%s>%s)' % pair for pair in token_specs)
 
-        # Mukarram: Line counting isn't working right, regex expression for NEWLINE does not work
+        # Mukarram: Line counting has been fixed
         line_num = 1
         line_start = 0
         for match in re.finditer(self.grammar_regex, input_str):
@@ -127,9 +123,11 @@ class Lexer:
             value = match.group()
             column = match.start() - line_start
             if kind == 'NEWLINE':
-                 line_start = match.end()
-                 line_num += 1
-                 continue
+                value = "\\n"
+                line_start = match.end()
+                yield TokenType(kind, value, line_num, column)
+                line_num += 1
+                continue
             yield TokenType(kind, value, line_num, column)
 
     """
@@ -139,12 +137,17 @@ class Lexer:
     from the class instantiation
     """
     def tokenize_file(self, input_str: str) -> list:
-        tokens = self.tokenize(input_str)
-        for token in tokens:
-            print("{0},   '{1}'".format(
-                token.tokenType,
-                token.tokenValue
+        tokens = []
+        token_yielded = self.tokenize(input_str)
+        for token_attr in token_yielded:
+            print_token = ("{0},  '{1}',  Line: {2},  Column: {3}".format(
+                token_attr.tokenType,
+                token_attr.tokenValue,
+                token_attr.tokenLine,
+                token_attr.tokenColumn
             ))
+            print(print_token)
+            tokens.append(print_token)
 
         if (self.gen_token_outfile):
             self.write_token_file(tokens)
@@ -159,12 +162,8 @@ class Lexer:
     in the lexer
     """
     def write_token_file(self, tokens: list):
-        token_file_out = open("tokens.txt", "w")
+        with open("tokens.txt", "w") as token_file_out:
 
-        # Somehow tokens is empty here?
-        for token in tokens:
-            token_file_out.write("{0},   '{1}'".format(
-                token.tokenType,
-                token.tokenValue
-            ))
-        token_file_out.close()
+            # Mukarram: Writing tokens to a file has been fixed
+            for token in tokens:
+                token_file_out.write("{0}\n".format(token))
