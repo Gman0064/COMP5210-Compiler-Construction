@@ -3,15 +3,20 @@ Crafting Interpreters Textbook
 https://craftinginterpreters.com/appendix-i.html
 
 
-program        → declaration* EOF ;
+program        → declaration* EOF
 
 declaration    → funDecl
                | varDecl
-               | statement ;
+               | statement
 
-funDecl        → type function ;
+funDecl        → typeDecl IDENTIFIER "(" (typeDecl IDENTIFIER)* ")" returnBlock
+               | void IDENTIFIER "(" (typeDecl IDENTIFIER)* ")" block
 
-varDecl        → type IDENTIFIER ( "=" expression )? ";" ;
+varDecl        → TYPE IDENTIFIER ( "=" expression )? ";"
+
+block          → "{" declaration* "}"
+
+returnBlock    → "{" declaration* returnStmt "}"
 
 statement      → exprStmt
                | forStmt
@@ -33,8 +38,6 @@ returnStmt     → "return" expression? ";"
 
 whileStmt      → "while" "(" expression ")" block
 
-block          → "{" declaration* "}"
-
 expression     → assignment
 
 assignment     → ( call "." )? IDENTIFIER "=" assignment | logic_or 
@@ -55,5 +58,6 @@ unary          → ( "!" | "-" ) unary | call
 
 call           → primary ( "(" arguments? ")" | "." IDENTIFIER )*
 
-primary        → "true" | "false" | "null" | "this"
-               | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+primary        → "null" | "this" | TYPE | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+
+varType        → TYPE | IDENTIFIER
