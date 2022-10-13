@@ -1,4 +1,5 @@
 ### Project Imports
+from tokenize import Token
 from tokentype import TokenType
 from error import Error, ErrorTypes
 
@@ -74,7 +75,7 @@ class Lexer:
         # Matches any number literal with no decimal amount
         # or with decimal amount
         # Won't match anything if there's a second decimal (which is expected?)
-        self.num_re = r"([0-9]*\.[0-9]*|[0-9])"
+        self.num_re = r"([0-9]*\.[0-9]+|[0-9]+)"
 
         # Matches any character between quotations, including
         # newlines and whitespace
@@ -104,8 +105,8 @@ class Lexer:
             ('TERMINATOR', self.terminator_re)
         ]
 
-        # Mukarram: I changed how the list in lexemes.json is inserted because of some incorrect matches
-        # For example, keywords were incorrectly being identified as identifiers
+        # Mukarram: I changed how the list in lexemes.json is inserted because of some
+        # incorrect matches. For example, keywords were incorrectly being identified as identifiers
         index = 0
         offset = 3
         for key in self.config.keys():
@@ -137,6 +138,9 @@ class Lexer:
                 line_num += 1
                 continue
             yield TokenType(kind, value, line_num, column)
+        
+        # Garrett: Add EOF token for program grammar
+        yield TokenType("EOF", '', line_num, column + 1)
 
     """
     tokenize_file
@@ -154,8 +158,9 @@ class Lexer:
                 token_attr.tokenLine,
                 token_attr.tokenColumn
             ))
-            print(print_token)
-            tokens.append(print_token)
+            # TODO: Garrett: Make verbosity check for print statements
+            # print(print_token)
+            tokens.append(token_attr)
 
         if (self.gen_token_outfile):
             self.write_token_file(tokens)
@@ -174,4 +179,10 @@ class Lexer:
 
             # Mukarram: Writing tokens to a file has been fixed
             for token in tokens:
-                token_file_out.write("{0}\n".format(token))
+                print_token = ("{0},  '{1}',  Line: {2},  Column: {3}".format(
+                    token.tokenType,
+                    token.tokenValue,
+                    token.tokenLine,
+                    token.tokenColumn
+                ))
+                token_file_out.write("{0}\n".format(print_token))
