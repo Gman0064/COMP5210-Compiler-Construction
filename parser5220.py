@@ -7,6 +7,31 @@ from tokentype import TokenType
 
 REMOVABLE_TOKENS = ["NEWLINE"]
 
+
+class ParseNode:
+    def __init__(self,
+                 node_val,
+                 parent = None,
+                 child = None
+                 ):
+        self.nodeVal = node_val
+        self.parent = parent
+        self.child = []
+
+    def assign_parent(self, parent):
+        self.parent = parent
+
+    def assign_child(self, child):
+        self.child.append(child)
+
+    def get_node(self):
+        return node_val
+
+    def get_parent(self):
+        return parent
+
+    def get_child(self):
+        return child
 """
 Parser Class
 
@@ -87,7 +112,8 @@ class Parser:
         self.lookahead_index = 0
         self.lookahead = self.tokens[self.lookahead_index]
 
-        self.rule = "program"
+        self.rule = "varDecl"
+        self.ParseTree = ParseNode(self.rule)
 
     """
     parse_tokens
@@ -99,7 +125,7 @@ class Parser:
     def parse_tokens(self):
 
         while (self.lookahead.tokenType != "EOF"):
-            self.descend_grammar(self.rule)
+            self.descend_grammar(self.rule, self.ParseTree)
 
         if (self.grammar_outfile_flag):
             self.__gen_grammar_file()
@@ -123,7 +149,9 @@ class Parser:
     TODO: The code structure still has some issues, it would encounter recursion error when initial input is not 
     "varDecl", need to fix this to make parse tree generation achievable
     """
-    def descend_grammar(self, rule_str: str):
+
+    def descend_grammar(self, rule_str: str, parent_node: ParseNode = None):
+        match = 0
         if (rule_str in self.grammar_tree.keys()):
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
@@ -132,12 +160,21 @@ class Parser:
                         print("Lookahead token {0} at line {1} column {2} matched rule {3}!"
                               .format(self.lookahead.tokenValue, self.lookahead.tokenLine, self.lookahead.tokenColumn,
                                       token))
+                        node = ParseNode(self.lookahead, parent_node)
+                        parent_node.assign_child(node)
                         self.lookahead_index += 1
                         self.lookahead = self.tokens[self.lookahead_index]
-                        continue
+                        if branch.index(token) == len(branch) - 1:
+                            match = 1
                     else:
                         # print("Descending rule {0}".format(token))
-                        self.descend_grammar(token)
+                        node = self.descend_grammar(token, ParseNode(token, parent_node))
+                        if node != 1:
+                            parent_node.assign_child(node.parent)
+                            node = node.parent
+                if match:
+                    break
+            return node
         else:
             # print("Reached leaf")
-            return
+            return 1
