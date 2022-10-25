@@ -32,6 +32,9 @@ class ParseNode:
 
     def get_child(self):
         return child
+
+    def remove_child(self, child):
+        self.child.remove(child)
 """
 Parser Class
 
@@ -112,7 +115,7 @@ class Parser:
         self.lookahead_index = 0
         self.lookahead = self.tokens[self.lookahead_index]
 
-        self.rule = "varDecl"
+        self.rule = "program"
         self.ParseTree = ParseNode(self.rule)
 
     """
@@ -126,6 +129,8 @@ class Parser:
 
         while (self.lookahead.tokenType != "EOF"):
             self.descend_grammar(self.rule, self.ParseTree)
+
+        print(self.ParseTree)
 
         if (self.grammar_outfile_flag):
             self.__gen_grammar_file()
@@ -152,6 +157,8 @@ class Parser:
 
     def descend_grammar(self, rule_str: str, parent_node: ParseNode = None):
         match = 0
+        if self.lookahead.tokenType == "EOF":
+            return
         if (rule_str in self.grammar_tree.keys()):
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
@@ -172,6 +179,7 @@ class Parser:
                         if node != 1:
                             parent_node.assign_child(node.parent)
                             node = node.parent
+                            match = 1
                 if match:
                     break
             return node
