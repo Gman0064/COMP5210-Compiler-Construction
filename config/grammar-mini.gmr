@@ -3,9 +3,9 @@
 // https://craftinginterpreters.com/appendix-i.html
 
 
-program ==> declList EOF
+program ==> declList
 
-declList ==> declaration declList
+declList ==> EOF | declaration declList
 
 declaration ==> varDecl | statement
             

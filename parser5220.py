@@ -4,45 +4,16 @@ import json
 ### Project Imports
 from grammar import Grammar
 from tokentype import TokenType
+from parsenode import ParseNode
 
 REMOVABLE_TOKENS = ["NEWLINE"]
 
-
-class ParseNode:
-    def __init__(self,
-                 node_val,
-                 parent = None,
-                 child = None
-                 ):
-        self.nodeVal = node_val
-        self.parent = parent
-        self.child = []
-
-    def assign_parent(self, parent):
-        self.parent = parent
-
-    def assign_child(self, child):
-        self.child.append(child)
-
-    def get_node(self):
-        return node_val
-
-    def get_parent(self):
-        return parent
-
-    def get_child(self):
-        return child
-
-    def remove_child(self, child):
-        self.child.remove(child)
 """
 Parser Class
 
 Class containing all code responsible for parsing a given
 list of tokens based on a gmr grammar file.
 """
-
-
 class Parser:
     """
     __gen_grammar_file
@@ -50,7 +21,6 @@ class Parser:
     Generate a text file listing the grammar tree that is read from the
     grammar configured for the parser
     """
-
     def __gen_grammar_file(self):
         print("Generating grammar file")
         f = open("grammar.txt", "w")
@@ -65,7 +35,6 @@ class Parser:
 
     Generate a text file listing the generated parse tree from the script
     """
-
     def __gen_parse_tree_file(self):
         # TODO Implement this
         pass
@@ -76,7 +45,6 @@ class Parser:
     Generate a text file listing the abstract syntax tree for the parser's parse
     tree
     """
-
     def __gen_ast_file(self):
         # TODO Implement this
         pass
@@ -87,7 +55,6 @@ class Parser:
     Parse the incoming flags provided and set the internal
     instance variables appropriately.
     """
-
     def __init__(
             self,
             token_list: list,
@@ -124,7 +91,6 @@ class Parser:
     Parse the tokens specified at instantiation, and generate any extra files based
     on provided flags.
     """
-
     def parse_tokens(self):
 
         while (self.lookahead.tokenType != "EOF"):
@@ -154,11 +120,9 @@ class Parser:
     TODO: The code structure still has some issues, it would encounter recursion error when initial input is not 
     "varDecl", need to fix this to make parse tree generation achievable
     """
-
     def descend_grammar(self, rule_str: str, parent_node: ParseNode = None):
         match = 0
-        if self.lookahead.tokenType == "EOF":
-            return
+        token_count = 0
         if (rule_str in self.grammar_tree.keys()):
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
@@ -170,7 +134,9 @@ class Parser:
                         node = ParseNode(self.lookahead, parent_node)
                         parent_node.assign_child(node)
                         self.lookahead_index += 1
-                        self.lookahead = self.tokens[self.lookahead_index]
+                        token_count += 1
+                        if self.lookahead_index < len(self.tokens):
+                            self.lookahead = self.tokens[self.lookahead_index]
                         if branch.index(token) == len(branch) - 1:
                             match = 1
                     else:
@@ -182,6 +148,8 @@ class Parser:
                             match = 1
                 if match:
                     break
+                else:
+                    self.lookahead_index -= token_count
             return node
         else:
             # print("Reached leaf")
