@@ -96,8 +96,6 @@ class Parser:
         while (self.lookahead.tokenType != "EOF"):
             self.descend_grammar(self.rule, self.ParseTree)
 
-        print(self.ParseTree)
-
         if (self.grammar_outfile_flag):
             self.__gen_grammar_file()
 
@@ -146,10 +144,18 @@ class Parser:
                             parent_node.assign_child(node.parent)
                             node = node.parent
                             match = 1
+                        else:
+                            break
                 if match:
                     break
                 else:
-                    self.lookahead_index -= token_count
+                    # self.lookahead_index -= token_count
+                    # self.lookahead = self.tokens[self.lookahead_index]
+                    index = len(parent_node.child)
+                    for i in range(0, index):
+                        parent_node.remove_child(parent_node.child[0])
+                        self.lookahead_index -= 1
+                    self.lookahead = self.tokens[self.lookahead_index]
             return node
         else:
             # print("Reached leaf")
