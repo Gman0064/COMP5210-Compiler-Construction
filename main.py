@@ -3,7 +3,7 @@
 
 ### Project Imports
 from lexer import Lexer
-from parser5220 import Parser
+from Parser import Parser
 from error import Error
 
 ### Python Imports

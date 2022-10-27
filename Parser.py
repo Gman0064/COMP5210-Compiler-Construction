@@ -15,6 +15,18 @@ Class containing all code responsible for parsing a given
 list of tokens based on a gmr grammar file.
 """
 class Parser:
+
+    def __parse_tree_recursion(self, tree: ParseNode, parent_node: dict):
+        tree_node = {}
+        for child in tree.child:
+            if child.nodeVal.tokenType == "EOF":
+                parent_node.update({tree.nodeVal.tokenValue: child.nodeVal.tokenType})
+            elif tree.nodeVal.tokenType == "RULE":
+                parent_node.update({tree.nodeVal.tokenValue: self.__parse_tree_recursion(child, tree_node)})
+        if tree.nodeVal.tokenType is not "RULE":
+            parent_node.update({tree.nodeVal.tokenType: tree.nodeVal.tokenValue})
+        return parent_node
+
     """
     __gen_grammar_file
 
@@ -36,8 +48,9 @@ class Parser:
     Generate a text file listing the generated parse tree from the script
     """
     def __gen_parse_tree_file(self):
-        # TODO Implement this
-        pass
+        tree = {}
+        tree = self.__parse_tree_recursion(self.ParseTree, tree)
+        print(tree)
 
     """
     __gen_ast_file
@@ -83,7 +96,7 @@ class Parser:
         self.lookahead = self.tokens[self.lookahead_index]
 
         self.rule = "program"
-        self.ParseTree = ParseNode(self.rule)
+        self.ParseTree = ParseNode(TokenType("RULE", self.rule, self.lookahead.tokenLine, self.lookahead.tokenColumn))
 
     """
     parse_tokens
