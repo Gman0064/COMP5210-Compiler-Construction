@@ -16,13 +16,23 @@ list of tokens based on a gmr grammar file.
 """
 class Parser:
 
+    """
+    __parse_tree_recursion
+
+    Generate a string representing the generated parse tree in a recursive manner.
+    The method is initially called by the method __gen_parse_tree_file.
+    """
     def __parse_tree_recursion(self, tree: ParseNode, parent_node: dict):
-        tree_node = {}
+        tree_node = {}  # Declare an empty dict to pass to the method recursively
         for child in tree.child:
+            # If the next declList's only child is EOF, it will generate a single pair
+            # as declList: EOF
             if child.nodeVal.tokenType == "EOF":
                 parent_node.update({tree.nodeVal.tokenValue: child.nodeVal.tokenType})
+            # Generate a branch in the parse tree output
             elif tree.nodeVal.tokenType == "RULE":
                 parent_node.update({tree.nodeVal.tokenValue: self.__parse_tree_recursion(child, tree_node)})
+        # When at the bottom leaf of the parse tree, create a dict with pair tokenType: tokenValue
         if tree.nodeVal.tokenType is not "RULE":
             parent_node.update({tree.nodeVal.tokenType: tree.nodeVal.tokenValue})
         return parent_node
@@ -48,6 +58,7 @@ class Parser:
     Generate a text file listing the generated parse tree from the script
     """
     def __gen_parse_tree_file(self):
+        # Initial empty dict which contains the parse tree file
         tree = {}
         tree = self.__parse_tree_recursion(self.ParseTree, tree)
         print(tree)
@@ -95,7 +106,9 @@ class Parser:
         self.lookahead_index = 0
         self.lookahead = self.tokens[self.lookahead_index]
 
+        # Define the starting point of descending grammar, set to program by default
         self.rule = "program"
+        # Define the root node of the parse tree
         self.ParseTree = ParseNode(TokenType("RULE", self.rule, self.lookahead.tokenLine, self.lookahead.tokenColumn))
 
     """
@@ -138,6 +151,7 @@ class Parser:
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
                 for token in branch:
+                    # When the lookahead token matches the token in grammar, consume the lookahead
                     if self.match(token):
                         print("Lookahead token {0} at line {1} column {2} matched rule {3}!"
                               .format(self.lookahead.tokenValue, self.lookahead.tokenLine, self.lookahead.tokenColumn,
@@ -150,8 +164,8 @@ class Parser:
                             self.lookahead = self.tokens[self.lookahead_index]
                         if branch.index(token) == len(branch) - 1:
                             match = 1
+                    # Start the recursion when lookahead does not match, pass the current grammar token to the method
                     else:
-                        # print("Descending rule {0}".format(token))
                         rule_node = TokenType("RULE", token, self.lookahead.tokenLine, None)
                         node = self.descend_grammar(token, ParseNode(rule_node, parent_node))
                         if node != 1:
@@ -174,5 +188,5 @@ class Parser:
                     self.lookahead = self.tokens[self.lookahead_index]
             return node
         else:
-            # print("Reached leaf")
+            # Return 1 when no matches have been made
             return 1
