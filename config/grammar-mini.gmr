@@ -1,0 +1,25 @@
+// Some references taken from the Lox programming language from
+// Crafting Interpreters Textbook
+// https://craftinginterpreters.com/appendix-i.html
+
+
+program ==> declList
+
+declList ==> EOF | declaration declList
+
+declaration ==> varDecl | statement
+            
+varDecl ==> TYPE IDENTIFIER EQUALS expression SEMICOLON
+            | TYPE IDENTIFIER SEMICOLON
+
+EQUALS ==> "="
+
+SEMICOLON ==> ";"
+
+expression ==> assignment
+
+assignment ==> term
+
+term ==> primary
+
+primary ==> "null" | "this" | TYPE | NUMBER | STRING | IDENTIFIER

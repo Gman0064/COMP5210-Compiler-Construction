@@ -1,5 +1,9 @@
+#!/usr/bin/env python3
+### Shebang for script execution
+
 ### Project Imports
 from lexer import Lexer
+from Parser import Parser
 from error import Error
 
 ### Python Imports
@@ -23,16 +27,43 @@ def main():
     )
 
     arg_parser.add_argument('filename', metavar="filename", help="input script filename", type=str)
-    arg_parser.add_argument("-l", help="increase output verbosity", action="store_true")
-    args = arg_parser.parse_args()
 
+    arg_parser.add_argument("-l", 
+                            help="Generate output token file", 
+                            action="store_true")
+    arg_parser.add_argument("-g", 
+                            help="Generate grammar file used during parsing", 
+                            action="store_true")
+    arg_parser.add_argument("-p", 
+                            help="Generate output parse tree", 
+                            action="store_true")
+    arg_parser.add_argument("-a", 
+                            help="Generate output abstract syntax tree", 
+                            action="store_true")
+    arg_parser.add_argument("-v", 
+                            help="Increase verbosity level and allow for printing debug statments",
+                            action="store_true")
+
+    args = arg_parser.parse_args()
 
     # Check to see if the incoming file exists, otherwise exit
     if os.path.exists(args.filename):
         file = open(args.filename, 'r')
         script = file.read()
-        lexer = Lexer(True)
-        lexer.tokenize_file(script)
+
+        # Lexer step
+        lexer = Lexer(token_outfile_flag=args.l)
+        tokens = lexer.tokenize_file(script)
+
+        # Parser step
+        parser = Parser(
+                token_list=tokens,
+                grammar_outfile_flag=args.g,
+                parse_tree_outfile_flag=args.p,
+                ast_outfile_flag=args.a
+            )
+        parser.parse_tokens()
+
     else:
         print('[Error] Given filename "{0}" does not exist!'.format(args.filename))
         exit(-1)
