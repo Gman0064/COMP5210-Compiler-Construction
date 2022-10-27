@@ -1,8 +1,11 @@
+//modified to work with version 1 of grammar
 #include <stdio.h>
 
 int main() {
 
-  int n, i, flag = 0.00;
+  int n;
+  int i;
+  float flag = 0.00;
   printf("Enter a positive integer: ");
   scanf("%d", &n);
 
