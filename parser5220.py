@@ -139,7 +139,8 @@ class Parser:
                             match = 1
                     else:
                         # print("Descending rule {0}".format(token))
-                        node = self.descend_grammar(token, ParseNode(token, parent_node))
+                        rule_node = TokenType("RULE", token, self.lookahead.tokenLine, None)
+                        node = self.descend_grammar(token, ParseNode(rule_node, parent_node))
                         if node != 1:
                             parent_node.assign_child(node.parent)
                             node = node.parent
@@ -149,10 +150,12 @@ class Parser:
                 if match:
                     break
                 else:
-                    # self.lookahead_index -= token_count
-                    # self.lookahead = self.tokens[self.lookahead_index]
                     index = len(parent_node.child)
                     for i in range(0, index):
+                        print("Removed token {0} at line {1} unmatched rule {2}!"
+                              .format(parent_node.child[0].nodeVal.tokenValue,
+                                      parent_node.child[0].nodeVal.tokenLine,
+                                      rule_str))
                         parent_node.remove_child(parent_node.child[0])
                         self.lookahead_index -= 1
                     self.lookahead = self.tokens[self.lookahead_index]
