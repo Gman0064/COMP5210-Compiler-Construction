@@ -114,9 +114,9 @@ class Lexer:
             # token_specs.append((key, self.__keyword_regex(self.config[key])))
             # Mukarram: Working on adding escape seq implementation, doesn't work just yet
             # That is why I skip adding it in token_spec for now
-            #if(key == "ESCAPE_SEQ"):
-            #    index += 1
-            #    continue
+            if(key == "ESCAPE_SEQ"):
+                index += 1
+                continue
             token_specs.insert(index + offset, (key, self.__keyword_regex(self.config[key])))
             index += 1
 
