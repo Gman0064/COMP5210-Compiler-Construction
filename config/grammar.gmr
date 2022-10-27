@@ -7,8 +7,8 @@ program ==> PREPROCESSOR* declaration* EOF
 
 declaration ==> funDecl | varDecl | statement
 
-funDecl ==> typeDecl IDENTIFIER "(" ( typeDecl IDENTIFIER )* ")" returnBlock
-            | void IDENTIFIER "(" ( typeDecl IDENTIFIER )* ")" block
+funDecl ==> varType IDENTIFIER "(" ( varType IDENTIFIER )* ")" returnBlock
+            | void IDENTIFIER "(" ( varType IDENTIFIER )* ")" block
             
 varDecl ==> TYPE IDENTIFIER ( "=" expression )? SEMICOLON
 
