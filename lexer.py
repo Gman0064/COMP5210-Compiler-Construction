@@ -67,11 +67,17 @@ class Lexer:
         f_data = f.read()
         f.close()
 
-        # config = json.loads(f_data)
         self.config = json.loads(f_data)
 
         self.gen_token_outfile = token_outfile_flag
+        
+        self.newline_re = r"\n|\r"
 
+        self.preprocessor_re = r"(^#.*)"
+
+        # https://stackoverflow.com/a/49187259
+        self.comment_re = r"(\/\/)(.+?)(?=[\n\r]|\*\))"
+        
         # Matches any number literal with no decimal amount
         # or with decimal amount
         # Won't match anything if there's a second decimal (which is expected?)
@@ -82,17 +88,13 @@ class Lexer:
         # Note: Does not recognize escaped characters yet
         self.string_re = r"(\"{1}[\S\s]*?\")"
 
+        self.escape_re = self.__keyword_regex(self.config["ESCAPE_SEQ"])
+        
         self.identifier_re = r"[_a-zA-Z][_a-zA-Z0-9]*"
-
-        self.preprocessor_re = r"(^#.*)"
 
         self.terminator_re = r";"
 
-        # https://stackoverflow.com/a/49187259
-        self.comment_re = r"(\/\/)(.+?)(?=[\n\r]|\*\))"
-
-        self.newline_re = r"\n|\r"
-
+        
     def tokenize(self, input_str: str) -> list:
         token_specs = [
             ('NEWLINE', self.newline_re),

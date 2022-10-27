@@ -3,9 +3,11 @@
 // https://craftinginterpreters.com/appendix-i.html
 
 
-// program ==> declaration* EOF
+program ==> declList
 
-// declaration ==> varDecl | statement
+declList ==> EOF | declaration declList
+
+declaration ==> varDecl | statement
             
 varDecl ==> TYPE IDENTIFIER EQUALS expression SEMICOLON
             | TYPE IDENTIFIER SEMICOLON
