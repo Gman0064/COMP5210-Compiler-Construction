@@ -73,7 +73,7 @@ class Lexer:
         
         self.newline_re = r"\n|\r"
 
-        self.preprocessor_re = r"(^#.*)"
+        self.preprocessor_re = r"(#.*>)"
 
         # https://stackoverflow.com/a/49187259
         self.comment_re = r"(\/\/)(.+?)(?=[\n\r]|\*\))"
@@ -136,8 +136,10 @@ class Lexer:
             if kind == 'NEWLINE':
                 value = "\\n"
                 line_start = match.end()
-                yield TokenType(kind, value, line_num, column)
+                # yield TokenType(kind, value, line_num, column)
                 line_num += 1
+                continue
+            if kind == 'COMMENT':
                 continue
             yield TokenType(kind, value, line_num, column)
         
