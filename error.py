@@ -14,14 +14,15 @@ class ErrorTypes(Enum):
 
 
 """
-Error Class
+ErrorHandler Class
 
 Class containing all code responsible for generating and
 presenting errors during the compilation process
 """
-class Error:
-    def __init__():
+class ErrorHandler:
+    def __init__(self):
         pass
 
-    def throw_error(error_msg: str, error_type: ErrorTypes, line: int, column: int):
+    def throw_error(self, error_msg: str, error_type: ErrorTypes, line: int, column: int):
         print("[line {0}:{1}] {2}; {3}".format(line, column, error_type.value, error_msg))
+        exit()

@@ -1,7 +1,7 @@
 ### Project Imports
 from tokenize import Token
 from tokentype import TokenType
-from error import Error, ErrorTypes
+from error import ErrorHandler, ErrorTypes
 
 ### Python Imports
 from typing import Any
@@ -136,8 +136,10 @@ class Lexer:
             if kind == 'NEWLINE':
                 value = "\\n"
                 line_start = match.end()
-                yield TokenType(kind, value, line_num, column)
+                #yield TokenType(kind, value, line_num, column)
                 line_num += 1
+                continue
+            if kind == "COMMENT":
                 continue
             yield TokenType(kind, value, line_num, column)
         

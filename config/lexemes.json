@@ -32,7 +32,8 @@
         "long",
         "double",
         "char",
-        "enum"
+        "enum",
+        "void"
     ],
     "SCOPE_OPEN":[
         "{"
@@ -94,5 +95,8 @@
     ],
     "SEMICOLON":[
         ";"
+    ],
+    "COMMA":[
+        ","
     ]
 }
