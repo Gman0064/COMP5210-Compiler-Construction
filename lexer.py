@@ -8,6 +8,7 @@ from typing import Any
 import json
 import re
 
+LEXEME_FILE = "config/lexemes.json"
 
 """
 Lexer Class
@@ -16,6 +17,17 @@ Class containing all code responsible for lexing
 and incoming script.
 """
 class Lexer:
+
+    """
+    __v_print
+
+    Verbose print. Only print these statements if the verbose flag is set
+    """
+    def __v_print(self, input):
+        if self.verbose_flag:
+            print(input)
+
+
     """
     __keyword_regex
 
@@ -58,19 +70,27 @@ class Lexer:
     Parse the incoming flags provided and set the internal
     instance variables appropriately
     """
-    def __init__(self, token_outfile_flag: bool):
+    def __init__(
+        self,
+        token_outfile_flag: bool = False, 
+        verbose_flag: bool = False):
 
         # Load our keywords and lexemes from the
         # keyword config file
         self.grammar_regex = None
-        f = open("config/lexemes.json", 'r')
+        f = open(LEXEME_FILE, 'r')
         f_data = f.read()
         f.close()
 
         self.config = json.loads(f_data)
 
+
         self.gen_token_outfile = token_outfile_flag
+        self.verbose_flag = verbose_flag
         
+
+        # Define class Regular Expressions for Lexing
+
         self.newline_re = r"\n|\r"
 
         self.preprocessor_re = r"(#.*>)"
@@ -163,7 +183,7 @@ class Lexer:
                 token_attr.tokenColumn
             ))
             # TODO: Garrett: Make verbosity check for print statements
-            # print(print_token)
+            self.__v_print(print_token)
             tokens.append(token_attr)
 
         if (self.gen_token_outfile):

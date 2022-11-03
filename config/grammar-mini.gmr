@@ -7,10 +7,10 @@ program ==> declList
 
 declList ==> EOF | declaration declList
 
-declaration ==> funDecl | varDecl | statement
+declaration ==> varDecl | funDecl | statement
 
 funDecl ==> VOID IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementList
-            | varType IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementList returnStatementWithReturn
+            | varType IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementListWithReturn
 
 parameterList ==> RIGHT_PAREN 
                 | varType ID RIGHT_PAREN
@@ -18,8 +18,8 @@ parameterList ==> RIGHT_PAREN
                 | varType ID EQUALS expression RIGHT_PAREN
                 | varType ID EQUALS expression RIGHT_PAREN COMMA
 
-varDecl ==> TYPE IDENTIFIER EQUALS expression SEMICOLON
-            | TYPE IDENTIFIER SEMICOLON
+varDecl ==> TYPE IDENTIFIER SEMICOLON
+            | TYPE IDENTIFIER EQUALS expression SEMICOLON 
 
 varType ==> IDENTIFIER | TYPE
 
@@ -31,7 +31,8 @@ statementListWithReturn ==> returnStatement SCOPE_CLOSE
 
 returnStatement ==> RETURN expression SEMICOLON
 
-statement ==> expression SEMICOLON
+statement ==> varDecl
+            | expression SEMICOLON
 
 expression ==> assignment
 

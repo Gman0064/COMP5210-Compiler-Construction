@@ -21,9 +21,11 @@
         "typedef",
         "volatile",
         "extern",
-        "return",
         "static",
         "union"
+    ],
+    "RETURN":[
+        "return"
     ],
     "TYPE":[
         "int",
@@ -32,7 +34,9 @@
         "long",
         "double",
         "char",
-        "enum",
+        "enum"
+    ],
+    "VOID":[
         "void"
     ],
     "SCOPE_OPEN":[
