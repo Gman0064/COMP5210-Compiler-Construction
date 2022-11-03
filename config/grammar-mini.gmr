@@ -7,31 +7,14 @@ program ==> declList
 
 declList ==> EOF | declaration declList
 
-declaration ==> funDecl | varDecl | statement
-
-funDecl ==> VOID IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementList
-            | varType IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementList returnStatementWithReturn
-
-parameterList ==> RIGHT_PAREN 
-                | varType ID RIGHT_PAREN
-                | varType ID RIGHT_PAREN COMMA
-                | varType ID EQUALS expression RIGHT_PAREN
-                | varType ID EQUALS expression RIGHT_PAREN COMMA
-
+declaration ==> varDecl | statement
+            
 varDecl ==> TYPE IDENTIFIER EQUALS expression SEMICOLON
             | TYPE IDENTIFIER SEMICOLON
 
-varType ==> IDENTIFIER | TYPE
+EQUALS ==> "="
 
-statementList ==> SCOPE_CLOSE
-                | statement statementList
-
-statementListWithReturn ==> returnStatement SCOPE_CLOSE
-                          | statement statementListWithReturn
-
-returnStatement ==> RETURN expression SEMICOLON
-
-statement ==> expression SEMICOLON
+SEMICOLON ==> ";"
 
 expression ==> assignment
 
@@ -39,4 +22,4 @@ assignment ==> term
 
 term ==> primary
 
-primary ==> "null" | TYPE | NUMBER | STRING | IDENTIFIER
+primary ==> "null" | "this" | TYPE | NUMBER | STRING | IDENTIFIER
