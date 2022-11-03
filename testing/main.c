@@ -1,4 +1,4 @@
-#include <stdio.h>
+//#include <stdio.h>
 
 int main() {
     // The following does not compile on gcc 11.2

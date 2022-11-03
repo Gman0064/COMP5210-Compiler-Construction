@@ -4,7 +4,7 @@
 ### Project Imports
 from lexer import Lexer
 from Parser import Parser
-from error import Error
+from error import ErrorHandler
 
 ### Python Imports
 import argparse

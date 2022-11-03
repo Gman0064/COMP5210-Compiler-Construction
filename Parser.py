@@ -5,8 +5,9 @@ import json
 from grammar import Grammar
 from tokentype import TokenType
 from parsenode import ParseNode
+from error import ErrorHandler, ErrorTypes
 
-REMOVABLE_TOKENS = ["NEWLINE"]
+REMOVABLE_TOKENS = ["NEWLINE", "COMMENT"]
 
 """
 Parser Class
@@ -33,7 +34,7 @@ class Parser:
             elif tree.nodeVal.tokenType == "RULE":
                 parent_node.update({tree.nodeVal.tokenValue: self.__parse_tree_recursion(child, tree_node)})
         # When at the bottom leaf of the parse tree, create a dict with pair tokenType: tokenValue
-        if tree.nodeVal.tokenType is not "RULE":
+        if tree.nodeVal.tokenType != "RULE":
             parent_node.update({tree.nodeVal.tokenType: tree.nodeVal.tokenValue})
         return parent_node
 
@@ -91,6 +92,8 @@ class Parser:
         self.parse_tree_outfile_flag = parse_tree_outfile_flag
         self.ast_outfile_flag = ast_outfile_flag
 
+        self.error_handler = ErrorHandler()
+
         # Remove any unnecessary tokens that are not explicility needed in the
         # grammar
         for token in self.tokens:
@@ -119,8 +122,7 @@ class Parser:
     """
     def parse_tokens(self):
 
-        while (self.lookahead.tokenType != "EOF"):
-            self.descend_grammar(self.rule, self.ParseTree)
+        self.descend_grammar(self.rule, self.ParseTree)
 
         if (self.grammar_outfile_flag):
             self.__gen_grammar_file()
@@ -145,33 +147,34 @@ class Parser:
     "varDecl", need to fix this to make parse tree generation achievable
     """
     def descend_grammar(self, rule_str: str, parent_node: ParseNode = None):
-        match = 0
+        match = False
         token_count = 0
+        print("Descending rule `{0}`".format(rule_str))
         if (rule_str in self.grammar_tree.keys()):
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
-                for token in branch:
+                for branch_node in branch:
                     # When the lookahead token matches the token in grammar, consume the lookahead
-                    if self.match(token):
-                        print("Lookahead token {0} at line {1} column {2} matched rule {3}!"
+                    if self.match(branch_node):
+                        print("Lookahead token {0} at line {1} column {2} matched rule {3}"
                               .format(self.lookahead.tokenValue, self.lookahead.tokenLine, self.lookahead.tokenColumn,
-                                      token))
+                                      branch_node))
                         node = ParseNode(self.lookahead, parent_node)
                         parent_node.assign_child(node)
                         self.lookahead_index += 1
                         token_count += 1
                         if self.lookahead_index < len(self.tokens):
                             self.lookahead = self.tokens[self.lookahead_index]
-                        if branch.index(token) == len(branch) - 1:
-                            match = 1
+                        if branch.index(branch_node) == len(branch) - 1:
+                            match = True
                     # Start the recursion when lookahead does not match, pass the current grammar token to the method
                     else:
-                        rule_node = TokenType("RULE", token, self.lookahead.tokenLine, None)
-                        node = self.descend_grammar(token, ParseNode(rule_node, parent_node))
-                        if node != 1:
+                        rule_node = TokenType("RULE", branch_node, self.lookahead.tokenLine, None)
+                        node = self.descend_grammar(branch_node, ParseNode(rule_node, parent_node))
+                        if node:
                             parent_node.assign_child(node.parent)
                             node = node.parent
-                            match = 1
+                            match = True
                         else:
                             break
                 if match:
@@ -179,14 +182,28 @@ class Parser:
                 else:
                     index = len(parent_node.child)
                     for i in range(0, index):
-                        print("Removed token {0} at line {1} unmatched rule {2}!"
+                        print("Removed token {0} at line {1} unmatched rule {2}"
                               .format(parent_node.child[0].nodeVal.tokenValue,
                                       parent_node.child[0].nodeVal.tokenLine,
                                       rule_str))
                         parent_node.remove_child(parent_node.child[0])
                         self.lookahead_index -= 1
                     self.lookahead = self.tokens[self.lookahead_index]
-            return node
+            
+            # After iterating through all branches, return the node found for the rule
+            if match:
+                return node
+            else:
+                # If no match was made, a Parse error was found. Report to user and exit
+                # self.error_handler.throw_error(
+                #     "Unexpected token `{0}` for rule `{1}`".format(self.lookahead.tokenValue, rule_str),
+                #     ErrorTypes.PARSER,
+                #     self.lookahead.tokenLine,
+                #     self.lookahead.tokenColumn
+                # )
+                print("Unexpected token `{0}` for rule `{1}`".format(self.lookahead.tokenValue, rule_str))
+                pass
         else:
-            # Return 1 when no matches have been made
-            return 1
+            # Return None when rule does not match in Grammar
+            print("No match for rule `{0}`".format(rule_str))
+            return None
