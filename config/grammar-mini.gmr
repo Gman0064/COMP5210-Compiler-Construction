@@ -7,7 +7,7 @@ program ==> declList
 
 declList ==> EOF | declaration declList
 
-declaration ==> varDecl | statement
+declaration ==> varDecl | expression
             
 varDecl ==> TYPE IDENTIFIER EQUALS expression SEMICOLON
             | TYPE IDENTIFIER SEMICOLON
@@ -16,10 +16,10 @@ EQUALS ==> "="
 
 SEMICOLON ==> ";"
 
-expression ==> assignment
+expression ==> binary | literal
 
-assignment ==> term
+literal ==> NUMBER | IDENTIFIER
 
-term ==> primary
+binary ==> literal op literal
 
-primary ==> "null" | "this" | TYPE | NUMBER | STRING | IDENTIFIER
+op ==> SINGLE_OP

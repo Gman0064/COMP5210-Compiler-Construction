@@ -7,7 +7,7 @@ from tokentype import TokenType
 from parsenode import ParseNode
 from error import ErrorHandler, ErrorTypes
 
-REMOVABLE_TOKENS = ["NEWLINE", "COMMENT"]
+REMOVABLE_TOKENS = ["NEWLINE", "COMMENT", "PREPROCESSOR"]
 
 """
 Parser Class
@@ -87,18 +87,19 @@ class Parser:
             parse_tree_outfile_flag: bool = False,
             ast_outfile_flag: bool = False):
 
-        self.tokens = token_list
+        self.tokens = []
         self.grammar_outfile_flag = grammar_outfile_flag
         self.parse_tree_outfile_flag = parse_tree_outfile_flag
         self.ast_outfile_flag = ast_outfile_flag
 
         self.error_handler = ErrorHandler()
 
-        # Remove any unnecessary tokens that are not explicility needed in the
-        # grammar
-        for token in self.tokens:
+        # Don't add any unnecessary tokens that are not explicility needed in the
+        # grammar to self.tokens
+        for token in token_list:
             if token.tokenType in REMOVABLE_TOKENS:
-                self.tokens.remove(token)
+                continue
+            self.tokens.append(token)
 
         # Open the grammar configuration and create a grammar tree.
         f = open("config/grammar-mini.gmr", 'r')
@@ -176,6 +177,7 @@ class Parser:
                             node = node.parent
                             match = True
                         else:
+                            match = False
                             break
                 if match:
                     break
