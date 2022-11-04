@@ -175,7 +175,9 @@ class Parser:
         if (rule_str in self.grammar_tree.keys()):
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
+                print("[!!!] Descending branch {0}".format(branch))
                 for branch_node in branch:
+                    # Iterate through all branch nodes, keep track of those that match, then iterate backwards for longest matches first
                     # When the lookahead token matches the token in grammar, consume the lookahead
                     if self.match(branch_node):
                         self.__v_print("[Match] Lookahead token {0} at line {1} column {2} matched rule {3}"
@@ -198,6 +200,7 @@ class Parser:
                             node = node.parent
                             match = True
                         else:
+                            match = False
                             break
                 if match:
                     break

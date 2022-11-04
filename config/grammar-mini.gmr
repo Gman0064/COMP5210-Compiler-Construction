@@ -7,7 +7,7 @@ program ==> declList
 
 declList ==> EOF | declaration declList
 
-declaration ==> varDecl | funDecl | statement
+declaration ==> funDecl | varDecl | statement
 
 funDecl ==> VOID IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementList
             | varType IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementListWithReturn
@@ -34,10 +34,16 @@ returnStatement ==> RETURN expression SEMICOLON
 statement ==> varDecl
             | expression SEMICOLON
 
-expression ==> assignment
+expression ==> term binaryTail 
+            | term 
+            | LEFT_PAREN expression RIGHT_PAREN
+            | LEFT_PAREN expression RIGHT_PAREN binaryTail
 
-assignment ==> term
+binaryTail ==> BINARY_OP expression
 
-term ==> primary
+op ==> PLUS_OP
+    | SUBT_OP
+    | DIV_OP
+    | MULT_OP
 
-primary ==> "null" | TYPE | NUMBER | STRING | IDENTIFIER
+term ==> INTEGER | IDENTIFIER
