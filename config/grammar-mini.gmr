@@ -33,9 +33,10 @@ returnStatement ==> RETURN expression SEMICOLON
 
 statement ==> varDecl
             | expression SEMICOLON
+                    
 
 expression ==> term binaryTail 
-            | term 
+            | term
             | LEFT_PAREN expression RIGHT_PAREN
             | LEFT_PAREN expression RIGHT_PAREN binaryTail
 

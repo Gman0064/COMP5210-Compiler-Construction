@@ -4,7 +4,7 @@
 int myval = (1+(3/(2*(3+4))));
 
 int val;
-int my_val = 74;
+int my_val = 74+89;
 int my_other_val;
 
 int main() {

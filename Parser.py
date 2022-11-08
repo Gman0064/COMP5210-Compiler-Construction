@@ -1,11 +1,12 @@
 ### Python Imports
-import json
+import pprint
 
 ### Project Imports
 from grammar import Grammar
 from tokentype import TokenType
 from parsenode import ParseNode
 from error import ErrorHandler, ErrorTypes
+from abstractTree import AST
 
 REMOVABLE_TOKENS = ["NEWLINE", "COMMENT"]
 GRAMMAR_FILE = "config/grammar-mini.gmr"
@@ -76,7 +77,11 @@ class Parser:
         # Initial empty dict which contains the parse tree file
         tree = {}
         tree = self.__parse_tree_recursion(self.ParseTree, tree)
-        print(tree)
+        pp = pprint.PrettyPrinter(indent=1, sort_dicts=False)
+        f = open("parsetree.txt", "w")
+        f.write(pp.pformat(tree))
+        f.close()
+        
 
 
     """
