@@ -10,7 +10,7 @@ declList ==> EOF | declaration declList
 declaration ==> varDecl | funDecl | statement
 
 funDecl ==> VOID IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementList
-            | varType IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementListWithReturn
+            | varType IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN returnStatementList
 
 parameterList ==> RIGHT_PAREN 
                 | varType ID RIGHT_PAREN
@@ -26,8 +26,8 @@ varType ==> IDENTIFIER | TYPE
 statementList ==> SCOPE_CLOSE
                 | statement statementList
 
-statementListWithReturn ==> returnStatement SCOPE_CLOSE
-                          | statement statementListWithReturn
+returnStatementList ==> returnStatement SCOPE_CLOSE
+                          | statement returnStatementList
 
 returnStatement ==> RETURN expression SEMICOLON
 

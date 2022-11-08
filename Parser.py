@@ -16,17 +16,18 @@ Parser Class
 Class containing all code responsible for parsing a given
 list of tokens based on a gmr grammar file.
 """
-class Parser:
 
+
+class Parser:
     """
     __v_print
 
     Verbose print. Only print these statements if the verbose flag is set
     """
+
     def __v_print(self, input):
         if self.verbose_flag:
             print(input)
-
 
     """
     __parse_tree_recursion
@@ -34,6 +35,7 @@ class Parser:
     Generate a string representing the generated parse tree in a recursive manner.
     The method is initially called by the method __gen_parse_tree_file.
     """
+    # NOTE: This function is currently replaced by the print() function in ParseNode class
     def __parse_tree_recursion(self, tree: ParseNode, parent_node: dict) -> dict:
         tree_node = {}  # Declare an empty dict to pass to the method recursively
         for child in tree.child:
@@ -49,6 +51,41 @@ class Parser:
             parent_node.update({tree.nodeVal.tokenType: tree.nodeVal.tokenValue})
         return parent_node
 
+    """
+    __parse_tree_unroll
+    
+    Perform a unrolling algorithm which will pull the child node to its same level
+    
+    I.E. In the algorithm a declList has children of declaration and declList, the nested declList will contain more
+    declaration and declList. This algorithm will pull the declaration node in the child declList to the same level with
+    the parent node
+    Before:                                 After:
+    DeclList                                DeclList
+        declaration                             declaration
+            ...                                     ...
+        declList                                declaration
+            declaration                             ...
+                ...
+            declList
+    """
+    # TODO: The algorithm is currently unstable, needs further development
+    def __parse_tree_unroll(self, node: ParseNode, child: ParseNode) -> ParseNode:
+        node_level = ""
+        if node.parent is not None:
+            node_level = node.parent.get_node().tokenValue[-4:]
+        while node_level == "List":
+            new_parent = node.parent.get_parent()
+            node.assign_parent(new_parent)
+            node_level = node.parent.get_node().tokenValue[-4:]
+        # if level == "List" and node.parent.parent is not None:
+            # node.assign_parent(node.parent.parent)
+        child_level = node.get_node().tokenValue[-4:]
+        if child_level != "List" and node.parent is not None:
+            node.assign_child(child)
+            node.parent.assign_child(node)
+        if child.parent is not None:
+            node = child.parent
+        return node
 
     """
     __gen_grammar_file
@@ -56,6 +93,7 @@ class Parser:
     Generate a text file listing the grammar tree that is read from the
     grammar configured for the parser
     """
+
     def __gen_grammar_file(self):
         self.__v_print("[Parser] Generating grammar file...")
         f = open("grammar.txt", "w")
@@ -65,19 +103,16 @@ class Parser:
                 f.write("\t\t  {0}\n".format(self.grammar_tree[key][x]))
         f.close()
 
-
     """
     __gen_parse_tree_file
 
     Generate a text file listing the generated parse tree from the script
     """
+    # NOTE: this function is currently updated with a new version of printing parse tree
+
     def __gen_parse_tree_file(self):
         self.__v_print("[Parser] Generating parse tree file...")
-        # Initial empty dict which contains the parse tree file
-        tree = {}
-        tree = self.__parse_tree_recursion(self.ParseTree, tree)
-        print(tree)
-
+        self.ParseTree.print()
 
     """
     __gen_ast_file
@@ -85,11 +120,11 @@ class Parser:
     Generate a text file listing the abstract syntax tree for the parser's parse
     tree
     """
+
     def __gen_ast_file(self):
         self.__v_print("[Parser] Generating AST file...")
         # TODO Implement this
         pass
-
 
     """
     __init__
@@ -97,6 +132,7 @@ class Parser:
     Parse the incoming flags provided and set the internal
     instance variables appropriately.
     """
+
     def __init__(
             self,
             token_list: list,
@@ -134,13 +170,13 @@ class Parser:
         # Define the root node of the parse tree
         self.ParseTree = ParseNode(TokenType("RULE", self.rule, self.lookahead.tokenLine, self.lookahead.tokenColumn))
 
-
     """
     parse_tokens
 
     Parse the tokens specified at instantiation, and generate any extra files based
     on provided flags.
     """
+
     def parse_tokens(self):
 
         self.descend_grammar(self.rule, self.ParseTree)
@@ -160,7 +196,6 @@ class Parser:
         else:
             return False
 
-
     """
     descend_grammar
     
@@ -168,6 +203,7 @@ class Parser:
     TODO: The code structure still has some issues, it would encounter recursion error when initial input is not 
     "varDecl", need to fix this to make parse tree generation achievable
     """
+
     def descend_grammar(self, rule_str: str, parent_node: ParseNode = None):
         match = False
         token_count = 0
@@ -179,8 +215,9 @@ class Parser:
                     # When the lookahead token matches the token in grammar, consume the lookahead
                     if self.match(branch_node):
                         self.__v_print("[Match] Lookahead token {0} at line {1} column {2} matched rule {3}"
-                              .format(self.lookahead.tokenValue, self.lookahead.tokenLine, self.lookahead.tokenColumn,
-                                      branch_node))
+                                       .format(self.lookahead.tokenValue, self.lookahead.tokenLine,
+                                               self.lookahead.tokenColumn,
+                                               branch_node))
                         node = ParseNode(self.lookahead, parent_node)
                         parent_node.assign_child(node)
                         self.lookahead_index += 1
@@ -189,15 +226,18 @@ class Parser:
                             self.lookahead = self.tokens[self.lookahead_index]
                         if branch.index(branch_node) == len(branch) - 1:
                             match = True
+                            node = parent_node
                     # Start the recursion when lookahead does not match, pass the current grammar token to the method
                     else:
                         rule_node = TokenType("RULE", branch_node, self.lookahead.tokenLine, None)
                         node = self.descend_grammar(branch_node, ParseNode(rule_node, parent_node))
                         if node:
-                            parent_node.assign_child(node.parent)
-                            node = node.parent
+                            parent_node.assign_child(node)
+                            if node.get_node().tokenValue != "EOF":
+                                node = node.parent
                             match = True
                         else:
+                            match = False
                             break
                 if match:
                     break
@@ -205,13 +245,13 @@ class Parser:
                     index = len(parent_node.child)
                     for i in range(0, index):
                         self.__v_print("Removed token {0} at line {1} unmatched rule {2}"
-                              .format(parent_node.child[0].nodeVal.tokenValue,
-                                      parent_node.child[0].nodeVal.tokenLine,
-                                      rule_str))
+                                       .format(parent_node.child[0].nodeVal.tokenValue,
+                                               parent_node.child[0].nodeVal.tokenLine,
+                                               rule_str))
                         parent_node.remove_child(parent_node.child[0])
                         self.lookahead_index -= 1
                     self.lookahead = self.tokens[self.lookahead_index]
-            
+
             # After iterating through all branches, return the node found for the rule
             if match:
                 return node
