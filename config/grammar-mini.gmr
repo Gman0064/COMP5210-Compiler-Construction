@@ -18,8 +18,9 @@ parameterList ==> RIGHT_PAREN
                 | varType ID EQUALS expression RIGHT_PAREN
                 | varType ID EQUALS expression RIGHT_PAREN COMMA
 
+// Changed expression to expressionList
 varDecl ==> TYPE IDENTIFIER SEMICOLON
-            | TYPE IDENTIFIER EQUALS expression SEMICOLON 
+            | TYPE IDENTIFIER EQUALS expressionList SEMICOLON
 
 varType ==> IDENTIFIER | TYPE
 
@@ -32,12 +33,17 @@ returnStatementList ==> returnStatement SCOPE_CLOSE
 returnStatement ==> RETURN expression SEMICOLON
 
 statement ==> varDecl
-            | expression SEMICOLON
+            | expressionList SEMICOLON
 
-expression ==> assignment
+// New rule expressionList
+expressionList ==> expression
+
+expression ==> term BINARY_OP expression
+             | term
 
 assignment ==> term
 
-term ==> primary
+term ==> LEFT_PAREN expression RIGHT_PAREN
+       | primary
 
-primary ==> "null" | TYPE | NUMBER | STRING | IDENTIFIER
+primary ==> NUMBER | IDENTIFIER

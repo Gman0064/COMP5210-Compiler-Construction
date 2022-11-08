@@ -212,6 +212,8 @@ class Parser:
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
                 for branch_node in branch:
+                    if branch_node == "RIGHT_PAREN":
+                        print(1)
                     # When the lookahead token matches the token in grammar, consume the lookahead
                     if self.match(branch_node):
                         self.__v_print("[Match] Lookahead token {0} at line {1} column {2} matched rule {3}"
@@ -226,15 +228,15 @@ class Parser:
                             self.lookahead = self.tokens[self.lookahead_index]
                         if branch.index(branch_node) == len(branch) - 1:
                             match = True
-                            node = parent_node
+                            # node = parent_node
                     # Start the recursion when lookahead does not match, pass the current grammar token to the method
                     else:
                         rule_node = TokenType("RULE", branch_node, self.lookahead.tokenLine, None)
                         node = self.descend_grammar(branch_node, ParseNode(rule_node, parent_node))
                         if node:
-                            parent_node.assign_child(node)
-                            if node.get_node().tokenValue != "EOF":
-                                node = node.parent
+                            parent_node.assign_child(node.parent)
+                            # if node.get_node().tokenValue != "EOF":
+                            node = node.parent
                             match = True
                         else:
                             match = False
@@ -243,6 +245,10 @@ class Parser:
                     break
                 else:
                     index = len(parent_node.child)
+                    return_index = 0
+                    for child_node in parent_node.child:
+                        return_index += len(child_node.child)
+                    return_index -= index
                     for i in range(0, index):
                         self.__v_print("Removed token {0} at line {1} unmatched rule {2}"
                                        .format(parent_node.child[0].nodeVal.tokenValue,
@@ -250,6 +256,8 @@ class Parser:
                                                rule_str))
                         parent_node.remove_child(parent_node.child[0])
                         self.lookahead_index -= 1
+                    if return_index > 0:
+                        self.lookahead_index -= return_index
                     self.lookahead = self.tokens[self.lookahead_index]
 
             # After iterating through all branches, return the node found for the rule
