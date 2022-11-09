@@ -125,6 +125,7 @@ class Parser:
     def __gen_ast_file(self):
         self.__v_print("[Parser] Generating AST file...")
         # TODO Implement this
+        ast = AST(self.ParseTree)
         pass
 
     """

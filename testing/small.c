@@ -1,7 +1,9 @@
 // we can't structure statments like (1+2)+1
 // but we can do the opposite direction
 
-int myval = (1+(3/(2*(3+4))));
+int myval = (1+2)*3;
+int val2 = (1+2-3*4) / myval;
+int val3 = (65)+(66);
 
 int val;
 int my_val = 74+89;
@@ -16,10 +18,9 @@ int main() {
 // OMG we support functions with statements!!!
 void test() {
     int val2;
-
+    
     // Assignments can't be expressions yet, working on it tho
     int val3 = 1;
-    int binary_val = ((4/2)*20)-36;
 }
 
 int anotherTest() {
