@@ -7,7 +7,7 @@ program ==> declList
 
 declList ==> EOF | declaration declList
 
-declaration ==> varDecl | funDecl | statement
+declaration ==> funDecl | varDecl | statement
 
 funDecl ==> VOID IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementList
             | varType IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN returnStatementList
@@ -41,7 +41,7 @@ expressionList ==> expression
 expression ==> term BINARY_OP expression
              | term
 
-assignment ==> term
+binaryTail ==> BINARY_OP expression
 
 term ==> LEFT_PAREN expression RIGHT_PAREN
        | primary

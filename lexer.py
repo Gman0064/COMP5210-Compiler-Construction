@@ -121,7 +121,7 @@ class Lexer:
             ('PREPROCESSOR', self.preprocessor_re),
             ('COMMENT', self.comment_re),
             # The list from lexemes.json is inserted from this position
-            ('NUMBER', self.num_re),
+            ('INTEGER', self.num_re),
             ('STRING', self.string_re),
             ('IDENTIFIER', self.identifier_re),
             ('TERMINATOR', self.terminator_re)

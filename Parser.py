@@ -1,11 +1,12 @@
 ### Python Imports
-import json
+import pprint
 
 ### Project Imports
 from grammar import Grammar
 from tokentype import TokenType
 from parsenode import ParseNode
 from error import ErrorHandler, ErrorTypes
+from abstractTree import AST
 
 REMOVABLE_TOKENS = ["NEWLINE", "COMMENT"]
 GRAMMAR_FILE = "config/grammar-mini.gmr"
@@ -211,6 +212,7 @@ class Parser:
         if (rule_str in self.grammar_tree.keys()):
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
+                print("[!!!] Descending branch {0}".format(branch))
                 for branch_node in branch:
                     if branch_node == "RIGHT_PAREN":
                         print(1)
