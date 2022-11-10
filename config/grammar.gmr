@@ -7,16 +7,18 @@ program ==> declList
 
 declList ==> EOF | declaration declList
 
-declaration ==> funDecl | varDecl | statement
+declaration ==> funcDecl | varDecl | statement
 
-funDecl ==> VOID IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN statementList
-            | varType IDENTIFIER LEFT_PAREN parameterList SCOPE_OPEN returnStatementList
+funcDecl ==> VOID IDENTIFIER LEFT_PAREN parameterDef SCOPE_OPEN statementList
+            | varType IDENTIFIER LEFT_PAREN parameterDef SCOPE_OPEN returnStatementList
 
-parameterList ==> RIGHT_PAREN 
-                | varType ID RIGHT_PAREN
-                | varType ID RIGHT_PAREN COMMA
-                | varType ID EQUALS expression RIGHT_PAREN
-                | varType ID EQUALS expression RIGHT_PAREN COMMA
+parameterDef ==> RIGHT_PAREN 
+                | varType IDENTIFIER parameterDefList
+                | varType IDENTIFIER EQUALS expressionList parameterDefList
+                
+parameterDefList ==> RIGHT_PAREN 
+                | COMMA varType IDENTIFIER parameterDefList
+                | COMMA varType IDENTIFIER EQUALS expressionList parameterDefList 
 
 varDecl ==> TYPE IDENTIFIER SEMICOLON
             | TYPE IDENTIFIER EQUALS expressionList SEMICOLON
@@ -29,15 +31,30 @@ statementList ==> SCOPE_CLOSE
 returnStatementList ==> returnStatement SCOPE_CLOSE
                      | statement returnStatementList
 
-returnStatement ==> RETURN expression SEMICOLON
+returnStatement ==> RETURN expressionList SEMICOLON
 
 statement ==> varDecl
             | assignment
+            | funcCall
             | expressionList SEMICOLON
 
 assignment ==> IDENTIFIER EQUALS expressionList SEMICOLON
 
+funcCall ==> IDENTIFIER LEFT_PAREN parameterCall SEMICOLON
+
+parameterCall ==> RIGHT_PAREN 
+                | expressionList parameterCallList
+
+parameterCallList ==> RIGHT_PAREN 
+                    | COMMA expressionList parameterCallList
+
+
+// Strings should be considered standalone terms when parsing expressionLists,
+// but should not be allowed in comprehensive expression parsing
+// i.e., foo("bar"+3); is not valid, but foo("bar"); is
+
 expressionList ==> expression
+                 | STRING
 
 expression ==> term BINARY_OP expression
              | term

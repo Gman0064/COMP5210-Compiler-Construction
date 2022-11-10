@@ -10,14 +10,15 @@ import pprint
 from parsenode import ParseNode
 
 
-EXPRESSION_NODES = [
+EXPRESSION_TOKENS = [
     "assignment",
-    "expressionList",
+    "varDecl",
+    "funcCall",
     "returnStatement"
 ]
 
-BLOCK_NODES = [
-    "funDecl"
+BLOCK_TOKENS = [
+    "funcDecl"
 ]
 
 
@@ -52,36 +53,64 @@ class AST():
         self.statement_history = []
         
 
+    """
+    __traverse_parse_tree
+
+    Traverse the parse tree to build our statement history and syntax tree
+    """
     def __traverse_parse_tree(self, node: ParseNode, context: str):
+        tokenValue = node.nodeVal.tokenValue
 
         # Specify our context when traversing 
-        if node.nodeVal.tokenValue in BLOCK_NODES:
+        if tokenValue in BLOCK_TOKENS:
             context = node.get_child()[1].nodeVal.tokenValue
-            self.__v_print("Moved to context '{0}'".format(context))
+            self.__v_print("[AST] Moved to context '{0}'".format(context))
 
-        if node.nodeVal.tokenValue in EXPRESSION_NODES:
+        if tokenValue in EXPRESSION_TOKENS:
             identifier = ""
-            parent = node.get_parent()
+            expression_node = None
+            #parent = node.get_parent()
 
-            if (parent.nodeVal.tokenValue == "varDecl"):
-                self.__v_print("Found an expression within a vardecl")
-                identifier = parent.get_child()[1].nodeVal.tokenValue
+            if (node.nodeVal.tokenValue == "varDecl"):
+                if node.get_child()[2].nodeVal.tokenType == "EQUALS":
+                    self.__v_print("[AST] Found an expression within a vardecl")
+                    identifier = node.get_child()[1].nodeVal.tokenValue     # IDENTIFIER
+                    expression_node = node.get_child()[3]                   # expressionList
+                else:
+                    # Don't process non-expressive variable declarations
+                    return
 
-            elif (parent.nodeVal.tokenValue == "assignment"):
-                self.__v_print("Found an expression within an assignment")
-                identifier = parent.get_child()[0].nodeVal.tokenValue
+            elif (node.nodeVal.tokenValue == "assignment"):
+                self.__v_print("[AST] Found an expression within an assignment")
+                identifier = node.get_child()[0].nodeVal.tokenValue     # IDENTIFIER
+                expression_node = node.get_child()[2]                   # expressionList
+
+            elif (node.nodeVal.tokenValue == "returnStatement"):
+                self.__v_print("[AST] Found an expression within a return statement")
+                identifier = ""                         # Return statements don't have identifiers
+                expression_node = node.get_child()[1]   # expressionList
+
+            elif (node.nodeVal.tokenValue == "funcCall"):
+                self.__v_print("[AST] Found an expression within a return statement")
+                identifier = node.get_child()[0].nodeVal.tokenValue   # IDENTIFIER
+                expression_node = node.get_child()[2]                 # parameterCall
 
             self.__v_print("Found {0} in context {1}".format(node.nodeVal.tokenValue, context))
             self.statement_history.append((
                 context,
-                node.nodeVal.tokenValue,
+                tokenValue,
                 identifier,
-                node))
+                expression_node))
         
         for child in node.child:
             self.__traverse_parse_tree(child, context)
 
 
+    """
+    build_ast
+
+    Process the incoming parse tree and generate an AST structure
+    """
     def build_ast(self):
         # Build our statement history list
         self.__traverse_parse_tree(self.parse_tree, "global")
@@ -96,25 +125,23 @@ class AST():
                 tree[context] = []
             tree[context].append(statement[3])
 
-        
-
         pprint.pprint(tree, indent=1, width=40)
 
 
 
-"""
-main
+# """
+# main
 
-Main method executed when ran as a standalone script. Used to generate
-a grammar based on a provided filename and prints the output.
-Useful for debugging grammar iterations.
-"""
-def main():
-    pass
+# Main method executed when ran as a standalone script. Used to generate
+# a grammar based on a provided filename and prints the output.
+# Useful for debugging grammar iterations.
+# """
+# def main():
+#     pass
 
 
-"""
-Script entry point
-"""
-if __name__ == "__main__":
-    main()
+# """
+# Script entry point
+# """
+# if __name__ == "__main__":
+#     main()

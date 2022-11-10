@@ -112,8 +112,6 @@ class Lexer:
         
         self.identifier_re = r"[_a-zA-Z][_a-zA-Z0-9]*"
 
-        self.terminator_re = r";"
-
         
     def tokenize(self, input_str: str) -> list:
         token_specs = [
@@ -123,8 +121,7 @@ class Lexer:
             # The list from lexemes.json is inserted from this position
             ('INTEGER', self.num_re),
             ('STRING', self.string_re),
-            ('IDENTIFIER', self.identifier_re),
-            ('TERMINATOR', self.terminator_re)
+            ('IDENTIFIER', self.identifier_re)
         ]
 
         # Mukarram: I changed how the list in lexemes.json is inserted because of some

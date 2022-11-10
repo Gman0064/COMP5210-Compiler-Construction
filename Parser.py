@@ -30,6 +30,7 @@ class Parser:
         if self.verbose_flag:
             print(input)
 
+
     """
     __parse_tree_recursion
 
@@ -51,6 +52,7 @@ class Parser:
         if tree.nodeVal.tokenType != "RULE":
             parent_node.update({tree.nodeVal.tokenType: tree.nodeVal.tokenValue})
         return parent_node
+
 
     """
     __parse_tree_unroll
@@ -88,6 +90,7 @@ class Parser:
             node = child.parent
         return node
 
+
     """
     __gen_grammar_file
 
@@ -104,6 +107,7 @@ class Parser:
                 f.write("\t\t  {0}\n".format(self.grammar_tree[key][x]))
         f.close()
 
+
     """
     __gen_parse_tree_file
 
@@ -117,6 +121,7 @@ class Parser:
         f.write(str(self.ParseTree))
         f.close()
 
+
     """
     __gen_ast_file
 
@@ -129,6 +134,7 @@ class Parser:
         # TODO Implement this
         ast = AST(self.ParseTree)
         ast.build_ast()
+
 
     """
     __init__
@@ -174,6 +180,7 @@ class Parser:
         # Define the root node of the parse tree
         self.ParseTree = ParseNode(TokenType("RULE", self.rule, self.lookahead.tokenLine, self.lookahead.tokenColumn))
 
+
     """
     parse_tokens
 
@@ -199,11 +206,18 @@ class Parser:
             self.__gen_ast_file()
 
 
+    """
+    match
+    
+    Match the lookahead token with a given token string
+    """
+
     def match(self, token: str) -> bool:
         if self.lookahead.tokenType == token:
             return True
         else:
             return False
+
 
     """
     descend_grammar

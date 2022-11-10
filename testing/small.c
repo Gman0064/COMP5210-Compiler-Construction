@@ -14,17 +14,15 @@ int main() {
     return 0;
 }
 
-// OMG we support functions with statements!!!
+// Support for functions with statements inside them
 void test() {
-    int val2;
-    
-    // Assignments can't be expressions yet, working on it tho
-    int val3 = 1;
+    printf(val2+val3);
+    val3 = 1;
 }
 
-int anotherTest() {
-    int val4 = 1;
-
+int anotherTest(int input1, int input2) {
+    printf(input1+input2);
+    val3 = (input1/input2)+74;
     // Return type checking doesn't work yet
     return 1;
 }
