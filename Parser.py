@@ -9,7 +9,7 @@ from error import ErrorHandler, ErrorTypes
 from abstractTree import AST
 
 REMOVABLE_TOKENS = ["NEWLINE", "COMMENT"]
-GRAMMAR_FILE = "config/grammar-mini.gmr"
+GRAMMAR_FILE = "config/grammar.gmr"
 
 """
 Parser Class
@@ -113,7 +113,9 @@ class Parser:
 
     def __gen_parse_tree_file(self):
         self.__v_print("[Parser] Generating parse tree file...")
-        self.ParseTree.print()
+        f = open("parsetree.txt", "w")
+        f.write(str(self.ParseTree))
+        f.close()
 
     """
     __gen_ast_file
@@ -126,7 +128,7 @@ class Parser:
         self.__v_print("[Parser] Generating AST file...")
         # TODO Implement this
         ast = AST(self.ParseTree)
-        pass
+        ast.build_ast()
 
     """
     __init__
@@ -158,7 +160,7 @@ class Parser:
                 self.tokens.remove(token)
 
         # Open the grammar configuration and create a grammar tree.
-        self.__v_print("Parsing based on grammar file '{0}'".format(GRAMMAR_FILE))
+        self.__v_print("[Parser] Parsing based on grammar file '{0}'".format(GRAMMAR_FILE))
         f = open(GRAMMAR_FILE, 'r')
         self.grammar_file = f.readlines()
         self.grammar_tree = Grammar(self.grammar_file).tree
@@ -183,6 +185,10 @@ class Parser:
 
         self.descend_grammar(self.rule, self.ParseTree)
 
+        self.__v_print("[Parser] Printing parse tree...")
+        if (self.verbose_flag):
+            self.ParseTree.print()
+
         if (self.grammar_outfile_flag):
             self.__gen_grammar_file()
 
@@ -191,6 +197,7 @@ class Parser:
 
         if (self.ast_outfile_flag):
             self.__gen_ast_file()
+
 
     def match(self, token: str) -> bool:
         if self.lookahead.tokenType == token:
@@ -209,17 +216,17 @@ class Parser:
     def descend_grammar(self, rule_str: str, parent_node: ParseNode = None):
         match = False
         token_count = 0
-        self.__v_print("Descending rule `{0}`".format(rule_str))
+        self.__v_print("[Parser] Descending rule `{0}`".format(rule_str))
         if (rule_str in self.grammar_tree.keys()):
             rule_branches = self.grammar_tree[rule_str]
             for branch in rule_branches:
-                print("[!!!] Descending branch {0}".format(branch))
+                self.__v_print("[Parser] Descending branch {0}".format(branch))
                 for branch_node in branch:
                     if branch_node == "RIGHT_PAREN":
-                        print(1)
+                        pass
                     # When the lookahead token matches the token in grammar, consume the lookahead
                     if self.match(branch_node):
-                        self.__v_print("[Match] Lookahead token {0} at line {1} column {2} matched rule {3}"
+                        self.__v_print("[Parser] [Match] Lookahead token {0} at line {1} column {2} matched rule {3}"
                                        .format(self.lookahead.tokenValue, self.lookahead.tokenLine,
                                                self.lookahead.tokenColumn,
                                                branch_node))
@@ -231,7 +238,6 @@ class Parser:
                             self.lookahead = self.tokens[self.lookahead_index]
                         if branch.index(branch_node) == len(branch) - 1:
                             match = True
-                            # node = parent_node
                     # Start the recursion when lookahead does not match, pass the current grammar token to the method
                     else:
                         rule_node = TokenType("RULE", branch_node, self.lookahead.tokenLine, None)
@@ -253,7 +259,7 @@ class Parser:
                         return_index += len(child_node.child)
                     return_index -= index
                     for i in range(0, index):
-                        self.__v_print("Removed token {0} at line {1} unmatched rule {2}"
+                        self.__v_print("[Parser] Removed token {0} at line {1} unmatched rule {2}"
                                        .format(parent_node.child[0].nodeVal.tokenValue,
                                                parent_node.child[0].nodeVal.tokenLine,
                                                rule_str))
@@ -274,8 +280,8 @@ class Parser:
                 #     self.lookahead.tokenLine,
                 #     self.lookahead.tokenColumn
                 # )
-                self.__v_print("[??] Unexpected token `{0}` for rule `{1}`".format(self.lookahead.tokenValue, rule_str))
+                self.__v_print("[Parser] [Error] Unexpected token `{0}` for rule `{1}`".format(self.lookahead.tokenValue, rule_str))
         else:
             # Return None when rule does not match in Grammar
-            self.__v_print("No match for rule `{0}`".format(rule_str))
+            self.__v_print("[Parser] No match for rule `{0}`".format(rule_str))
             return None

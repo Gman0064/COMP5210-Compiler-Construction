@@ -30,6 +30,16 @@ class ParseNode:
     def remove_child(self, child):
         self.child.remove(child)
 
+    def __str__(self):
+        return self.__to_str()
+
+    def __to_str(self, node_level: int = 0):
+        val = ('\t' * node_level + "'{0}': '{1}'".format(self.nodeVal.tokenType, self.nodeVal.tokenValue))
+        node_level += 1
+        for child in self.child:
+            val += ('\n' + child.__to_str(node_level))
+        return val
+
     """
     print
     

@@ -1,8 +1,8 @@
 // we can't structure statments like (1+2)+1
 // but we can do the opposite direction
 
-int myval = (1+2)*3;
-int val2 = (1+2-3*4) / myval;
+int myval = 2;
+int val2 = (1+2-3+4)+3;
 int val3 = (65)+(66);
 
 int val;
@@ -10,8 +10,7 @@ int my_val = 74+89;
 int my_other_val;
 
 int main() {
-    char test;
-    
+    val3 = val2 + 2;
     return 0;
 }
 
