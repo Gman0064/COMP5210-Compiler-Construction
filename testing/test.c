@@ -1,4 +1,5 @@
-#include <stdio.h>
+// We don't support preproccessor statements
+// #include <stdio.h>
 
 // Testing requirement of leading zeros in decimal numbers
 

@@ -16,7 +16,7 @@ ZERO_OR_ONE_CLOSURE_TOKEN = ")?"
 
 
 """
-Parser Class
+Grammar Class
 
 Class containing all code responsible for parsing a given
 gmr grammar file and generating a grammar tree.
@@ -114,7 +114,11 @@ def main():
                     'Can be ran as a script to preview a generated grammar'
     )
 
-    arg_parser.add_argument('filename', metavar="filename", help="input grammar file", type=str)
+    arg_parser.add_argument('filename',
+                            metavar="filename",
+                            help="Input grammar file as path",
+                            type=str)
+
     args = arg_parser.parse_args()
 
     # Check to see if the incoming file exists, otherwise exit

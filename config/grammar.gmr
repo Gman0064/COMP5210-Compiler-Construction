@@ -3,62 +3,63 @@
 // https://craftinginterpreters.com/appendix-i.html
 
 
-program ==> PREPROCESSOR* declaration* EOF
+program ==> declList
 
-declaration ==> funDecl | varDecl | statement
+declList ==> EOF | declaration declList
 
-funDecl ==> varType IDENTIFIER "(" ( varType IDENTIFIER )* ")" returnBlock
-            | void IDENTIFIER "(" ( varType IDENTIFIER )* ")" block
+declaration ==> funcDecl | varDecl | statement
 
-varDecl ==> TYPE IDENTIFIER ( "=" expression )? SEMICOLON
+funcDecl ==> VOID IDENTIFIER LEFT_PAREN parameterDef SCOPE_OPEN statementList
+            | varType IDENTIFIER LEFT_PAREN parameterDef SCOPE_OPEN returnStatementList
 
-SEMICOLON ==> ";"
+parameterDef ==> RIGHT_PAREN 
+                | varType IDENTIFIER parameterDefList
+                | varType IDENTIFIER EQUALS expressionList parameterDefList
+                
+parameterDefList ==> RIGHT_PAREN 
+                | COMMA varType IDENTIFIER parameterDefList
+                | COMMA varType IDENTIFIER EQUALS expressionList parameterDefList 
 
-block ==> "{" declaration* "}"
+varDecl ==> TYPE IDENTIFIER SEMICOLON
+            | TYPE IDENTIFIER EQUALS expressionList SEMICOLON
 
-returnBlock ==> "{" declaration* returnStmt "}"
+varType ==> IDENTIFIER | TYPE
 
-statement ==> exprStmt
-           | forStmt
-           | ifStmt
-           | returnStmt
-           | whileStmt
-           | block
+statementList ==> SCOPE_CLOSE
+                | statement statementList
 
-exprStmt ==> expression SEMICOLON
+returnStatementList ==> returnStatement SCOPE_CLOSE
+                     | statement returnStatementList
 
-forStmt ==> "for" "(" ( varDecl | exprStmt | SEMICOLON )
-                           expression? SEMICOLON
-                           expression? ")" statement
+returnStatement ==> RETURN expressionList SEMICOLON
 
-ifStmt ==> "if" "(" expression ")" block
-                 ( "else" block )?
+statement ==> varDecl
+            | assignment
+            | funcCall
+            | expressionList SEMICOLON
+
+assignment ==> IDENTIFIER EQUALS expressionList SEMICOLON
+
+funcCall ==> IDENTIFIER LEFT_PAREN parameterCall SEMICOLON
+
+parameterCall ==> RIGHT_PAREN 
+                | expressionList parameterCallList
+
+parameterCallList ==> RIGHT_PAREN 
+                    | COMMA expressionList parameterCallList
 
 
-returnStmt ==> "return" expression? SEMICOLON
+// Strings should be considered standalone terms when parsing expressionLists,
+// but should not be allowed in comprehensive expression parsing
+// i.e., foo("bar"+3); is not valid, but foo("bar"); is
 
-whileStmt ==> "while" "(" expression ")" block
+expressionList ==> expression
+                 | STRING
 
-expression ==> assignment
+expression ==> term BINARY_OP expression
+             | term
 
-assignment ==> ( call "." )? IDENTIFIER "=" assignment | logic_or 
+term ==> LEFT_PAREN expression RIGHT_PAREN
+       | primary
 
-logic_or ==> logic_and ( "or" logic_and )*
-
-logic_and ==> equality ( "and" equality )*
-
-equality ==> comparison ( ( "!=" | "==" ) comparison )*
-
-comparison ==> term ( ( ">" | ">=" | "<" | "<=" ) term )*
-
-term ==> factor ( ( "-" | "+" ) factor )*
-
-factor ==> unary ( ( "/" | "*" ) unary )*
-
-unary ==> ( "!" | "-" ) unary | call
-
-call ==> primary ( "(" arguments? ")" | "." IDENTIFIER )*
-
-primary ==> "null" | "this" | TYPE | NUMBER | STRING | IDENTIFIER | "(" expression ")"
-
-varType ==> TYPE | IDENTIFIER
+primary ==> INTEGER | IDENTIFIER

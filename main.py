@@ -52,7 +52,10 @@ def main():
         script = file.read()
 
         # Lexer step
-        lexer = Lexer(token_outfile_flag=args.l)
+        lexer = Lexer(
+                token_outfile_flag=args.l,
+                verbose_flag=args.v
+            )
         tokens = lexer.tokenize_file(script)
 
         # Parser step
@@ -60,7 +63,8 @@ def main():
                 token_list=tokens,
                 grammar_outfile_flag=args.g,
                 parse_tree_outfile_flag=args.p,
-                ast_outfile_flag=args.a
+                ast_outfile_flag=args.a,
+                verbose_flag=args.v
             )
         parser.parse_tokens()
 

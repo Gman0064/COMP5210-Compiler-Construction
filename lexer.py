@@ -8,6 +8,7 @@ from typing import Any
 import json
 import re
 
+LEXEME_FILE = "config/lexemes.json"
 
 """
 Lexer Class
@@ -16,6 +17,17 @@ Class containing all code responsible for lexing
 and incoming script.
 """
 class Lexer:
+
+    """
+    __v_print
+
+    Verbose print. Only print these statements if the verbose flag is set
+    """
+    def __v_print(self, input):
+        if self.verbose_flag:
+            print(input)
+
+
     """
     __keyword_regex
 
@@ -58,19 +70,27 @@ class Lexer:
     Parse the incoming flags provided and set the internal
     instance variables appropriately
     """
-    def __init__(self, token_outfile_flag: bool):
+    def __init__(
+        self,
+        token_outfile_flag: bool = False, 
+        verbose_flag: bool = False):
 
         # Load our keywords and lexemes from the
         # keyword config file
         self.grammar_regex = None
-        f = open("config/lexemes.json", 'r')
+        f = open(LEXEME_FILE, 'r')
         f_data = f.read()
         f.close()
 
         self.config = json.loads(f_data)
 
+
         self.gen_token_outfile = token_outfile_flag
+        self.verbose_flag = verbose_flag
         
+
+        # Define class Regular Expressions for Lexing
+
         self.newline_re = r"\n|\r"
 
         self.preprocessor_re = r"(#.*>)"
@@ -92,8 +112,6 @@ class Lexer:
         
         self.identifier_re = r"[_a-zA-Z][_a-zA-Z0-9]*"
 
-        self.terminator_re = r";"
-
         
     def tokenize(self, input_str: str) -> list:
         token_specs = [
@@ -101,10 +119,9 @@ class Lexer:
             ('PREPROCESSOR', self.preprocessor_re),
             ('COMMENT', self.comment_re),
             # The list from lexemes.json is inserted from this position
-            ('NUMBER', self.num_re),
+            ('INTEGER', self.num_re),
             ('STRING', self.string_re),
-            ('IDENTIFIER', self.identifier_re),
-            ('TERMINATOR', self.terminator_re)
+            ('IDENTIFIER', self.identifier_re)
         ]
 
         # Mukarram: I changed how the list in lexemes.json is inserted because of some
@@ -161,7 +178,7 @@ class Lexer:
                 token_attr.tokenColumn
             ))
             # TODO: Garrett: Make verbosity check for print statements
-            # print(print_token)
+            self.__v_print(print_token)
             tokens.append(token_attr)
 
         if (self.gen_token_outfile):
