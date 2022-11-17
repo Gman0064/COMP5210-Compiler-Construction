@@ -40,6 +40,9 @@ def main():
     arg_parser.add_argument("-a", 
                             help="Generate output abstract syntax tree", 
                             action="store_true")
+    arg_parser.add_argument("-s", 
+                            help="Generate output symbol table", 
+                            action="store_true")
     arg_parser.add_argument("-v", 
                             help="Increase verbosity level and allow for printing debug statments",
                             action="store_true")
@@ -64,6 +67,7 @@ def main():
                 grammar_outfile_flag=args.g,
                 parse_tree_outfile_flag=args.p,
                 ast_outfile_flag=args.a,
+                symbol_table_outfile_flag=args.s,
                 verbose_flag=args.v
             )
         parser.parse_tokens()

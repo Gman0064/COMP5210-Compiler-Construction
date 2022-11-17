@@ -10,9 +10,14 @@ int my_val = 74+89;
 int my_other_val;
 
 int main() {
+    int val4 = 0;
     val3 = val2 + 2;
-    return 0;
+    return val3;
 }
+
+int val5 = 0;
+
+void main2(){}
 
 // Support for functions with statements inside them
 void test() {

@@ -20,8 +20,8 @@ parameterDefList ==> RIGHT_PAREN
                 | COMMA varType IDENTIFIER parameterDefList
                 | COMMA varType IDENTIFIER EQUALS expressionList parameterDefList 
 
-varDecl ==> TYPE IDENTIFIER SEMICOLON
-            | TYPE IDENTIFIER EQUALS expressionList SEMICOLON
+varDecl ==> varType IDENTIFIER SEMICOLON
+            | varType IDENTIFIER EQUALS expressionList SEMICOLON
 
 varType ==> IDENTIFIER | TYPE
 

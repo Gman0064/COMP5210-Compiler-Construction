@@ -28,6 +28,7 @@ AST Class
 Class containing all code responsible for parsing a given
 parse tree to generate an AST file.
 """
+
 class AST():
     """
     __v_print
@@ -45,6 +46,7 @@ class AST():
 
     Process the incoming parse tree and generate an AST structure
     """
+
     def __init__(self, 
                 parse_tree: ParseNode = None,
                 verbose_flag: bool = False) -> list:
@@ -58,6 +60,7 @@ class AST():
 
     Traverse the parse tree to build our statement history and syntax tree
     """
+
     def __traverse_parse_tree(self, node: ParseNode, context: str):
         tokenValue = node.nodeVal.tokenValue
 
@@ -111,6 +114,7 @@ class AST():
 
     Process the incoming parse tree and generate an AST structure
     """
+    
     def build_ast(self):
         # Build our statement history list
         self.__traverse_parse_tree(self.parse_tree, "global")

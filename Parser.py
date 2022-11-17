@@ -1,5 +1,5 @@
 ### Python Imports
-import pprint
+import json
 
 ### Project Imports
 from grammar import Grammar
@@ -7,6 +7,7 @@ from tokentype import TokenType
 from parsenode import ParseNode
 from error import ErrorHandler, ErrorTypes
 from abstractTree import AST
+from symbolTable import symbolTable
 
 REMOVABLE_TOKENS = ["NEWLINE", "COMMENT", "PREPROCESSOR"]
 GRAMMAR_FILE = "config/grammar.gmr"
@@ -17,7 +18,6 @@ Parser Class
 Class containing all code responsible for parsing a given
 list of tokens based on a gmr grammar file.
 """
-
 
 class Parser:
     """
@@ -38,6 +38,7 @@ class Parser:
     The method is initially called by the method __gen_parse_tree_file.
     """
     # NOTE: This function is currently replaced by the print() function in ParseNode class
+
     def __parse_tree_recursion(self, tree: ParseNode, parent_node: dict) -> dict:
         tree_node = {}  # Declare an empty dict to pass to the method recursively
         for child in tree.child:
@@ -72,6 +73,7 @@ class Parser:
             declList
     """
     # TODO: The algorithm is currently unstable, needs further development
+
     def __parse_tree_unroll(self, node: ParseNode, child: ParseNode) -> ParseNode:
         node_level = ""
         if node.parent is not None:
@@ -117,7 +119,7 @@ class Parser:
 
     def __gen_parse_tree_file(self):
         self.__v_print("[Parser] Generating parse tree file...")
-        f = open("parsetree.txt", "w")
+        f = open("parseTree.txt", "w")
         f.write(str(self.ParseTree))
         f.close()
 
@@ -137,6 +139,27 @@ class Parser:
 
 
     """
+    __gen_symbol_table_file
+
+    Generate a text file listing the symbol table generated from parser's parse
+    tree
+    """
+
+    def __gen_symbol_table_file(self):
+        filename = "symbolTable.txt"
+        self.__v_print("[Parser] Generating symbol table file...")
+        
+        ST = symbolTable(self.ParseTree, self.verbose_flag)
+        ST.build_symbol_table()
+
+        f = open(filename, "w")
+        f.write(json.dumps(ST.symbol_table, indent = 4))
+        f.close()
+        
+        self.__v_print("[ST] Generated symbol table written to: pwd/'{0}'".format(filename))
+
+
+    """
     __init__
 
     Parse the incoming flags provided and set the internal
@@ -149,12 +172,14 @@ class Parser:
             grammar_outfile_flag: bool = False,
             parse_tree_outfile_flag: bool = False,
             ast_outfile_flag: bool = False,
+            symbol_table_outfile_flag: bool = False,
             verbose_flag: bool = False):
 
         self.tokens = []
         self.grammar_outfile_flag = grammar_outfile_flag
         self.parse_tree_outfile_flag = parse_tree_outfile_flag
         self.ast_outfile_flag = ast_outfile_flag
+        self.symbol_table_outfile_flag = symbol_table_outfile_flag
         self.verbose_flag = verbose_flag
 
         self.error_handler = ErrorHandler()
@@ -205,6 +230,9 @@ class Parser:
 
         if (self.ast_outfile_flag):
             self.__gen_ast_file()
+
+        if (self.symbol_table_outfile_flag):
+            self.__gen_symbol_table_file()
 
 
     """
