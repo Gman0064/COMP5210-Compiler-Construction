@@ -8,6 +8,7 @@ import pprint
 
 ### Project Imports
 from parsenode import ParseNode
+from astnode import AstNode
 
 
 EXPRESSION_TOKENS = [
@@ -111,7 +112,7 @@ class AST():
 
     Process the incoming parse tree and generate an AST structure
     """
-    def build_ast(self):
+    def build_ast(self) -> dict:
         # Build our statement history list
         self.__traverse_parse_tree(self.parse_tree, "global")
 
@@ -123,9 +124,13 @@ class AST():
             context = statement[0]
             if context not in tree.keys():
                 tree[context] = []
-            tree[context].append(statement[3])
+            node = AstNode(statement[1], statement[2], statement[3])
+            tree[context].append(node)
 
         pprint.pprint(tree, indent=1, width=40)
+
+        return tree
+
 
 
 

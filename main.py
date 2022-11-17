@@ -4,6 +4,8 @@
 ### Project Imports
 from lexer import Lexer
 from Parser import Parser
+from abstractTree import AST
+from ir_gen import IR
 from error import ErrorHandler
 
 ### Python Imports
@@ -67,6 +69,16 @@ def main():
                 verbose_flag=args.v
             )
         parser.parse_tokens()
+        parse_tree = parser.ParseTree
+
+        #AST Step
+        ast = AST(parse_tree)
+        ast_tree = ast.build_ast()
+
+        # 3 Address Code / IR Step
+        ir = IR(ast_tree)
+        
+
 
     else:
         print('[Error] Given filename "{0}" does not exist!'.format(args.filename))
