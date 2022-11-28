@@ -6,13 +6,13 @@ from Parser import ParseNode
 #code blocks and where it is referenced in the symbol table
 @dataclass
 class AstNode():
-    def __init__(self, identifier: str, statement_type: str, statement: ParseNode):
+    def __init__(self, identifier: str, type: str, expression: ParseNode):
         self.identifier = identifier
-        self.statement_type = statement_type
-        self.statement = statement
+        self.type = type
+        self.expression = expression
 
     def __str__(self):
         return "Identifier: {}\n \
-                Statement Type: {} \
-                Statement: {}".format(self.identifier, self.statement_type, self.statement)
+                Statement Type: {}\n \
+                Expression: {}".format(self.identifier, self.type, self.expression)
             

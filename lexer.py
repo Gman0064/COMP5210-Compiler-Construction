@@ -8,6 +8,9 @@ from typing import Any
 import json
 import re
 
+
+VERBOSE_PREFIX = "[Lexer]"
+
 LEXEME_FILE = "config/lexemes.json"
 
 """
@@ -25,7 +28,7 @@ class Lexer:
     """
     def __v_print(self, input):
         if self.verbose_flag:
-            print(input)
+            print(VERBOSE_PREFIX + " " + str(input))
 
 
     """

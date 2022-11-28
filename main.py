@@ -42,6 +42,9 @@ def main():
     arg_parser.add_argument("-a", 
                             help="Generate output abstract syntax tree", 
                             action="store_true")
+    arg_parser.add_argument("-i", 
+                            help="Generate output intermediate representation / 3 address code", 
+                            action="store_true")
     arg_parser.add_argument("-v", 
                             help="Increase verbosity level and allow for printing debug statments",
                             action="store_true")
@@ -73,11 +76,15 @@ def main():
 
         #AST Step
         ast = AST(parse_tree)
-        ast_tree = ast.build_ast()
+        ast_tree = ast.ast_tree
 
         # 3 Address Code / IR Step
-        ir = IR(ast_tree)
-        
+        ir = IR(
+                ast_tree=ast_tree,
+                ir_outfile_flag=args.i,
+                verbose_flag=args.v
+            )
+        tac_tree = ir.tac_tree
 
 
     else:

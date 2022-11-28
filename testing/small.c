@@ -26,4 +26,3 @@ int anotherTest(int input1, int input2) {
     // Return type checking doesn't work yet
     return 1;
 }
-
