@@ -7,18 +7,18 @@ program ==> declList
 
 declList ==> EOF | declaration declList
 
-declaration ==> funcDecl | varDecl | statement
+declaration ==> funcDecl | varDecl
 
 funcDecl ==> VOID IDENTIFIER LEFT_PAREN parameterDef SCOPE_OPEN statementList
             | varType IDENTIFIER LEFT_PAREN parameterDef SCOPE_OPEN returnStatementList
 
 parameterDef ==> RIGHT_PAREN 
                 | varType IDENTIFIER parameterDefList
-                | varType IDENTIFIER EQUALS expressionList parameterDefList
+//                | varType IDENTIFIER EQUALS expressionList parameterDefList
                 
 parameterDefList ==> RIGHT_PAREN 
                 | COMMA varType IDENTIFIER parameterDefList
-                | COMMA varType IDENTIFIER EQUALS expressionList parameterDefList 
+//                | COMMA varType IDENTIFIER EQUALS expressionList parameterDefList 
 
 varDecl ==> varType IDENTIFIER SEMICOLON
             | varType IDENTIFIER EQUALS expressionList SEMICOLON
@@ -47,7 +47,6 @@ parameterCall ==> RIGHT_PAREN
 
 parameterCallList ==> RIGHT_PAREN 
                     | COMMA expressionList parameterCallList
-
 
 // Strings should be considered standalone terms when parsing expressionLists,
 // but should not be allowed in comprehensive expression parsing

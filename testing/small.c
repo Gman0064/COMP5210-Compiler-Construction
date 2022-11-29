@@ -9,9 +9,10 @@ int val;
 int my_val = 74+89;
 int my_other_val;
 
-int main() {
-    int val4 = 0;
-    val3 = val2 + 2;
+int anotherTest(int input1, int input2) {
+    printf(input1+input2);
+    val3 = (input1/input2)+74;
+    // Return type checking doesn't work yet
     return val3;
 }
 
@@ -22,13 +23,15 @@ void main2(){}
 // Support for functions with statements inside them
 void test() {
     printf(val2+val3);
-    val3 = 1;
+    val = 1;
 }
 
-int anotherTest(int input1, int input2) {
-    printf(input1+input2);
-    val3 = (input1/input2)+74;
-    // Return type checking doesn't work yet
-    return 1;
+int main() {
+    int val4 = 0;
+    int val5 = 0;
+    int val6 = 0;
+    // int val4, val6 = 0 does not work
+    val3 = val2 + val4;
+    anotherTest(val4, val6);
+    return val3;
 }
-
