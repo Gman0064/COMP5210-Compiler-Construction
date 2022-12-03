@@ -4,8 +4,6 @@
 ### Project Imports
 from lexer import Lexer
 from Parser import Parser
-from abstractTree import AST
-from ir_gen import IR
 from error import ErrorHandler
 
 ### Python Imports
@@ -42,8 +40,8 @@ def main():
     arg_parser.add_argument("-a", 
                             help="Generate output abstract syntax tree", 
                             action="store_true")
-    arg_parser.add_argument("-i", 
-                            help="Generate output intermediate representation / 3 address code", 
+    arg_parser.add_argument("-s", 
+                            help="Generate output symbol table", 
                             action="store_true")
     arg_parser.add_argument("-v", 
                             help="Increase verbosity level and allow for printing debug statments",
@@ -69,23 +67,10 @@ def main():
                 grammar_outfile_flag=args.g,
                 parse_tree_outfile_flag=args.p,
                 ast_outfile_flag=args.a,
+                symbol_table_outfile_flag=args.s,
                 verbose_flag=args.v
             )
         parser.parse_tokens()
-        parse_tree = parser.ParseTree
-
-        #AST Step
-        ast = AST(parse_tree)
-        ast_tree = ast.ast_tree
-
-        # 3 Address Code / IR Step
-        ir = IR(
-                ast_tree=ast_tree,
-                ir_outfile_flag=args.i,
-                verbose_flag=args.v
-            )
-        tac_tree = ir.tac_tree
-
 
     else:
         print('[Error] Given filename "{0}" does not exist!'.format(args.filename))
