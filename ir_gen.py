@@ -75,12 +75,7 @@ class IR():
                 # Pull the list of expressions from the ast 
                 expressions = self.ast_tree[block]
 
-                new_block_name = ""
-                if block == "main":
-                    new_block_name = "b0"
-                else: 
-                    new_block_name = "b"+str(self.blockCount)
-                    self.blockCount += 1
+                new_block_name = block
 
                 # Assign an empty list to the block for future use
                 self.tac_tree[new_block_name] = []

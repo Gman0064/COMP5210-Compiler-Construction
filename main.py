@@ -7,6 +7,8 @@ from Parser import Parser
 from abstractTree import AST
 from ir_gen import IR
 from error import ErrorHandler
+from tacnode import VariableTAC, ReturnTAC
+from ir_to_asm import Assembler
 
 ### Python Imports
 import argparse
@@ -89,6 +91,13 @@ def main():
             verbose_flag=args.v
         )
         tac_tree = ir.tac_tree
+
+        """
+        Assembly implementation, unfinished
+        """
+        # asm = Assembler(tac_tree)
+        # asm.tac_to_asm()
+        # asm_code = asm.asm_out
 
     else:
         print('[Error] Given filename "{0}" does not exist!'.format(args.filename))

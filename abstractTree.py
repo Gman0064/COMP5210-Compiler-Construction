@@ -8,12 +8,14 @@ import pprint
 
 ### Project Imports
 from parsenode import ParseNode
+from astnode import AstNode
 
 
 EXPRESSION_TOKENS = [
     "assignment",
     "varDecl",
     "funcCall",
+    "forLoop",
     "returnStatement"
 ]
 
@@ -54,6 +56,8 @@ class AST():
         self.parse_tree = parse_tree
         self.statement_history = []
         self.ast_tree = {}
+
+        self.build_ast()
         
 
     """
@@ -120,17 +124,20 @@ class AST():
         # Build our statement history list
         self.__traverse_parse_tree(self.parse_tree, "global")
 
-        pprint.pprint(self.statement_history, indent=1)
-
         # Organize our base level abstract tree from statement history
         tree = {}
         for statement in self.statement_history:
             context = statement[0]
+            type = statement[1]
+            identifier = statement[2]
+            expression = statement[3]
+
             if context not in tree.keys():
                 tree[context] = []
-            tree[context].append(statement[3])
 
-        pprint.pprint(tree, indent=1, width=40)
+            node = AstNode(identifier, type, expression)
+
+            tree[context].append(node)
 
         self.ast_tree = tree
 
