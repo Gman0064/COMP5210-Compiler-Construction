@@ -35,10 +35,15 @@ returnStatement ==> RETURN expressionList SEMICOLON
 
 statement ==> varDecl
             | assignment
+            | forLoop
             | funcCall
             | expressionList SEMICOLON
 
+
 assignment ==> IDENTIFIER EQUALS expressionList SEMICOLON
+
+
+forLoop ==> FOR LEFT_PAREN assignment comparison increment RIGHT_PAREN SCOPE_OPEN statementList
 
 funcCall ==> IDENTIFIER LEFT_PAREN parameterCall SEMICOLON
 
@@ -62,3 +67,7 @@ term ==> LEFT_PAREN expression RIGHT_PAREN
        | primary
 
 primary ==> INTEGER | IDENTIFIER
+
+increment ==> IDENTIFIER UNARY_OP
+
+comparison ==> term COMPARISON term SEMICOLON

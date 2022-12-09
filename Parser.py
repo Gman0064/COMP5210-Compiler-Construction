@@ -54,45 +54,6 @@ class Parser:
             parent_node.update({tree.nodeVal.tokenType: tree.nodeVal.tokenValue})
         return parent_node
 
-
-    """
-    __parse_tree_unroll
-    
-    Perform a unrolling algorithm which will pull the child node to its same level
-    
-    I.E. In the algorithm a declList has children of declaration and declList, the nested declList will contain more
-    declaration and declList. This algorithm will pull the declaration node in the child declList to the same level with
-    the parent node
-    Before:                                 After:
-    DeclList                                DeclList
-        declaration                             declaration
-            ...                                     ...
-        declList                                declaration
-            declaration                             ...
-                ...
-            declList
-    """
-    # TODO: The algorithm is currently unstable, needs further development
-
-    def __parse_tree_unroll(self, node: ParseNode, child: ParseNode) -> ParseNode:
-        node_level = ""
-        if node.parent is not None:
-            node_level = node.parent.get_node().tokenValue[-4:]
-        while node_level == "List":
-            new_parent = node.parent.get_parent()
-            node.assign_parent(new_parent)
-            node_level = node.parent.get_node().tokenValue[-4:]
-        # if level == "List" and node.parent.parent is not None:
-            # node.assign_parent(node.parent.parent)
-        child_level = node.get_node().tokenValue[-4:]
-        if child_level != "List" and node.parent is not None:
-            node.assign_child(child)
-            node.parent.assign_child(node)
-        if child.parent is not None:
-            node = child.parent
-        return node
-
-
     """
     __gen_grammar_file
 
@@ -217,6 +178,7 @@ class Parser:
     def parse_tokens(self):
 
         self.descend_grammar(self.rule, self.ParseTree)
+        self.ParseTree.print()
 
         self.__v_print("[Parser] Printing parse tree...")
         if (self.verbose_flag):

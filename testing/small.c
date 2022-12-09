@@ -23,6 +23,10 @@ void main2(){}
 // Support for functions with statements inside them
 void test() {
     printf(val2+val3);
+    for (val5 = 0; val5 < 6; val5++){
+        newVal = newVal + val5;
+        anotherTest(val1, val2);
+    }
     val = 1;
 }
 
