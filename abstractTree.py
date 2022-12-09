@@ -53,6 +53,7 @@ class AST():
         self.verbose_flag = verbose_flag
         self.parse_tree = parse_tree
         self.statement_history = []
+        self.ast_tree = {}
         
 
     """
@@ -130,6 +131,8 @@ class AST():
             tree[context].append(statement[3])
 
         pprint.pprint(tree, indent=1, width=40)
+
+        self.ast_tree = tree
 
 
 
